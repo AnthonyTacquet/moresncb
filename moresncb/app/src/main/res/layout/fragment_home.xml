@@ -3,11 +3,125 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".HomeFragment">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="HOME" />
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/lightblue">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="120dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Where would you like to go?"
+                    android:layout_gravity="left"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/from_input_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:theme="@style/TextInputLayoutStyle"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">                    android:hint="From:">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/from_input"
+                                android:hint="From: "
+                                android:textColorHint="@color/white"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/to_input_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:theme="@style/TextInputLayoutStyle"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/to_input"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:textColorHint="@color/white"
+                                android:hint="To:" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingStart="5dp"
+                        android:src="@drawable/shuffle_solid"
+                        android:tint="@color/white"/>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/lightgrey"
+                android:padding="10dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/lightblue"
+                    android:text="Departure"
+                    android:layout_weight="1"
+                    android:textSize="15sp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/sliders_solid"
+                    android:tint="@color/lightblue"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </FrameLayout>
