@@ -17,9 +17,32 @@
             android:orientation="vertical"
             android:background="@color/lightblue">
 
-            <ImageView
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="120dp"/>
+                android:layout_height="150dp">
+
+                <!-- First ImageView -->
+                <ImageView
+                    android:id="@+id/image_view1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="-160dp"
+                    android:layout_marginEnd="-30dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/home_background_light" />
+
+                <!-- Second ImageView -->
+                <ImageView
+                    android:id="@+id/image_view2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/home_foreground_light" />
+
+            </RelativeLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -98,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@color/lightgrey"
-                android:padding="10dp"
+                android:padding="15dp"
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical">
 
