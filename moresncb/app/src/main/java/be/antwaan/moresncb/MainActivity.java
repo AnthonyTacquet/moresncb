@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(R.layout.activity_main);
+        setContentView(binding.getRoot());
 
         replaceFragment(new HomeFragment());
 
@@ -28,7 +28,10 @@ public class MainActivity extends AppCompatActivity {
                 replaceFragment(new HomeFragment());
             else if(item.getItemId() == R.id.favorites)
                 replaceFragment(new FavoriteFragment());
-
+            else if(item.getItemId() == R.id.maps)
+                replaceFragment(new MapFragment());
+            else if(item.getItemId() == R.id.info)
+                replaceFragment(new InfoFragment());
             return true;
         });
 
