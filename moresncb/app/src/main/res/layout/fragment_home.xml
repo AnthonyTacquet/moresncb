@@ -80,6 +80,7 @@
                                 android:id="@+id/from_input"
                                 android:hint="From: "
                                 android:textColorHint="@color/white"
+                                android:textColor="@color/white"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent" />
 
@@ -98,6 +99,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:textColorHint="@color/white"
+                                android:textColor="@color/white"
                                 android:hint="To:" />
                         </com.google.android.material.textfield.TextInputLayout>
 
