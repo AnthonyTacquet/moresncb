@@ -50,6 +50,12 @@ public class SearchFragment extends Fragment {
     private InputMethodManager inputMethodManager;
     private String name = "";
     private Context context;
+
+    public SearchFragment(){
+        allStations = new ArrayList<>();
+        name = "Destination";
+
+    }
     public SearchFragment(Context context, String name, ArrayList<Station> stations){
         this.name = name;
         allStations = stations;
@@ -60,6 +66,8 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View fragView = inflater.inflate(R.layout.fragment_search, container, false);
+        if (context == null)
+            context = requireContext();
 
         listView = fragView.findViewById(R.id.station_list);
         input = fragView.findViewById(R.id.input_field);

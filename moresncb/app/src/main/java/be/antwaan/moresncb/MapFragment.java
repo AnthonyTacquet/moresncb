@@ -1,5 +1,6 @@
 package be.antwaan.moresncb;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -23,12 +24,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import java.util.Map;
+
 import be.antwaan.moresncb.data.NMBSData;
+import be.antwaan.moresncb.global.NMBS.Vehicle;
 
 public class MapFragment extends Fragment {
     private View fragView;
     private MapView mapView;
     private ProgressBar progressBar;
+    private Context context;
+    private Vehicle vehicle;
+
+    public MapFragment(){}
+
+    public MapFragment(Context context, Vehicle vehicle){
+        this.context = context;
+        this.vehicle = vehicle;
+    }
 
 
     @Override
@@ -36,14 +49,14 @@ public class MapFragment extends Fragment {
         fragView = inflater.inflate(R.layout.fragment_map, container, false);
 
         progressBar = fragView.findViewById(R.id.progressBar);
-
-
+        if (context == null)
+            context = requireContext();
         Configuration.getInstance().setUserAgentValue(getActivity().getPackageName());
 
         mapView = fragView.findViewById(R.id.mapView);
 
         setDefaultOsmSettings(); // Set default map settings
-        drawIcon(51.0874, 3.4483, "Train 1", ContextCompat.getDrawable(getContext(), R.drawable.baseline_train_24)); // draw test icon
+        drawVehicle(); // draw icon
 
 
         return fragView;
@@ -60,7 +73,12 @@ public class MapFragment extends Fragment {
         mapView.getController().setCenter(startPoint);
     }
 
-    private void drawIcon(double latitude, double longitude, String name, Drawable drawable){
+    private void drawVehicle(){
+
+        double latitude = vehicle.getLocationY();
+        double longitude = vehicle.getLocationX();
+        String name = vehicle.getName();
+        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.baseline_train_24);
 
         Marker marker = new Marker(mapView);
         GeoPoint geoPoint = new GeoPoint(latitude, longitude);
@@ -69,7 +87,8 @@ public class MapFragment extends Fragment {
         marker.setTitle(name);
 
         if (drawable instanceof VectorDrawable) {
-            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);            Drawable resizedDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, (int) (48.0f * getResources().getDisplayMetrics().density), (int) (48.0f * getResources().getDisplayMetrics().density), true));
+            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Drawable resizedDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, (int) (48.0f * getResources().getDisplayMetrics().density), (int) (48.0f * getResources().getDisplayMetrics().density), true));
             Canvas canvas = new Canvas(bitmap);
             drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             drawable.draw(canvas);
@@ -80,5 +99,11 @@ public class MapFragment extends Fragment {
 
         mapView.getOverlays().add(marker);
         mapView.invalidate();
+    }
+
+    private void setZoom(double latitude, double longitude){
+        mapView.getController().setZoom(12.0);
+        GeoPoint startPoint = new GeoPoint(latitude, longitude); // Set the latitude and longitude of the map center
+        mapView.getController().setCenter(startPoint);
     }
 }

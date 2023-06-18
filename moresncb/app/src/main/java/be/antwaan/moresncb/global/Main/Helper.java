@@ -3,6 +3,7 @@ package be.antwaan.moresncb.global.Main;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Helper {
 
@@ -32,8 +33,9 @@ public class Helper {
         return i / 60;
     }
 
-    public static String GetDate(LocalDateTime date){
-        return "" + Helper.MakeOneDigitTwo(date.getDayOfMonth())  + Helper.MakeOneDigitTwo(date.getMonthValue()) + Helper.MakeOneDigitTwo(date.getYear() % 100);
+    public static String getDate(LocalDateTime date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy");
+        return date.format(formatter);
     }
 
     public static String DecentDate(String date){
@@ -43,8 +45,9 @@ public class Helper {
         return LocalDate.of(year, month, day).toString();
     }
 
-    public static String GetTime(LocalDateTime time){
-        return "" + Helper.MakeOneDigitTwo(time.getHour()) + Helper.MakeOneDigitTwo(time.getMinute());
+    public static String getTime(LocalDateTime time){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HHmm");
+        return time.format(formatter);
     }
 
 

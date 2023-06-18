@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -381,7 +382,7 @@ public class NMBSData {
             int id = object.getInt("id");
             Departure departure = GetDepartureFromJsonObject(object.getJSONObject("departure"));
             Arrival arrival = GetArrivalFromJsonObject(object.getJSONObject("arrival"));
-            TimeOnly duration = TimeOnly.FromSecondsToTime(object.getInt("duration"));
+            Duration duration = Duration.ofSeconds(object.getInt("duration"));
             ArrayList<Alert> alerts = GetAlertsFromJsonArray(object.getJSONObject("alerts").getJSONArray("alert"));
 
             Connection connection = new Connection(id, departure, arrival, duration, alerts);
@@ -487,7 +488,7 @@ public class NMBSData {
 
     public ArrayList<Connection> GetConnections(Station departure, Station arrival, LocalDateTime dateTime, DepartureOrArrival deporarr, int results) throws JSONException {
         String query = "https://api.irail.be/connections/?from=" + departure.getName() + "&to=" + arrival.getName() + "&date="
-                + Helper.GetDate(dateTime) + "&time=" + Helper.GetTime(dateTime) +
+                + Helper.getDate(dateTime) + "&time=" + Helper.getTime(dateTime) +
                 "&timesel=" + deporarr.toString().toLowerCase() + "&format=json&lang=en&typeOfTransport=automatic&alerts=true&results=" + results;
         String responseBody = GetJsonString(query);
 
@@ -498,7 +499,7 @@ public class NMBSData {
     }
 
     public ArrayList<Departure> GetLiveBoardDeparture(Station station, LocalDateTime dateTime) throws JSONException {
-        String query = "https://api.irail.be/liveboard/?station=" + station.getName() + "&date=" + Helper.GetDate(dateTime) + "&time=" + Helper.GetTime(dateTime) +
+        String query = "https://api.irail.be/liveboard/?station=" + station.getName() + "&date=" + Helper.getDate(dateTime) + "&time=" + Helper.getTime(dateTime) +
                 "&arrdep=departure&lang=en&format=json&alerts=false";
 
         String responseBody = GetJsonString(query);
@@ -510,7 +511,7 @@ public class NMBSData {
     }
 
     public ArrayList<Arrival> GetLiveBoardArrival(Station station, LocalDateTime dateTime) throws JSONException {
-        String query = "https://api.irail.be/liveboard/?station=" + station.getName() + "&date=" + Helper.GetDate(dateTime) + "&time=" + Helper.GetTime(dateTime) +
+        String query = "https://api.irail.be/liveboard/?station=" + station.getName() + "&date=" + Helper.getDate(dateTime) + "&time=" + Helper.getTime(dateTime) +
                 "&arrdep=arrival&lang=en&format=json&alerts=false";
 
         String responseBody = GetJsonString(query);
@@ -522,7 +523,7 @@ public class NMBSData {
     }
 
     public Vehicle GetVehicle(String id, LocalDateTime dateTime) throws JSONException {
-        String query = "https://api.irail.be/vehicle/?id=" + id + "&date=" + Helper.GetDate(dateTime) + "&format=json&lang=en&alerts=false";
+        String query = "https://api.irail.be/vehicle/?id=" + id + "&date=" + Helper.getDate(dateTime) + "&format=json&lang=en&alerts=false";
         String responseBody = GetJsonString(query);
 
         JSONObject jsonObject = new JSONObject(responseBody);
@@ -531,7 +532,7 @@ public class NMBSData {
     }
 
     public Vehicle GetVehicles(LocalDateTime dateTime) throws JSONException {
-        String query = "https://api.irail.be/vehicle/" + "&date=" + Helper.GetDate(dateTime) + "&format=json&lang=en&alerts=false";
+        String query = "https://api.irail.be/vehicle/" + "&date=" + Helper.getDate(dateTime) + "&format=json&lang=en&alerts=false";
         String responseBody = GetJsonString(query);
 
         JSONObject jsonObject = new JSONObject(responseBody);

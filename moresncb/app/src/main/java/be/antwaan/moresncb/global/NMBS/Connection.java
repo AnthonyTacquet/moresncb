@@ -2,6 +2,7 @@ package be.antwaan.moresncb.global.NMBS;
 
 import be.antwaan.moresncb.global.Main.TimeOnly;
 import java.sql.Time;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -9,10 +10,10 @@ public class Connection {
     private int id;
     private Departure departure;
     private Arrival arrival;
-    private TimeOnly duration;
+    private Duration duration;
     private ArrayList<Alert> alerts;
 
-    public Connection(int id, Departure departure, Arrival arrival, TimeOnly duration, ArrayList<Alert> alerts) {
+    public Connection(int id, Departure departure, Arrival arrival, Duration duration, ArrayList<Alert> alerts) {
         this.id = id;
         this.departure = departure;
         this.arrival = arrival;
@@ -44,11 +45,11 @@ public class Connection {
         this.arrival = arrival;
     }
 
-    public TimeOnly getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
-    public void setDuration(TimeOnly duration) {
+    public void setDuration(Duration duration) {
         this.duration = duration;
     }
 
@@ -73,6 +74,6 @@ public class Connection {
                 ", " + arrival.getDateTime().getHours() +
                 ":" + arrival.getDateTime().getMinutes() +
                 (arrival.getDelay()!=0? "+" + arrival.getDelay():"") +
-                "     duration: " + duration.getHour() + ":" + duration.getMinute();
+                "     duration: " + duration.toMinutes();
     }
 }
