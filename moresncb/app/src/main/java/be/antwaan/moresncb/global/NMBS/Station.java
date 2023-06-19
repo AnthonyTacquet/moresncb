@@ -1,5 +1,7 @@
 package be.antwaan.moresncb.global.NMBS;
 
+import java.util.Objects;
+
 public class Station implements Comparable<Station> {
     private double locationY;
     private double locationX;
@@ -77,5 +79,16 @@ public class Station implements Comparable<Station> {
         return this.name.compareTo(o.name);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Station)) return false;
+        Station station = (Station) o;
+        return Objects.equals(getStandardName(), station.getStandardName()) && Objects.equals(getName(), station.getName()) && Objects.equals(getId(), station.getId()) && Objects.equals(getApiId(), station.getApiId());
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getLocationY(), getLocationX(), getStandardName(), getName(), getId(), getApiId());
+    }
 }

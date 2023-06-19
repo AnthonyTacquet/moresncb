@@ -148,8 +148,6 @@ public class NMBSData {
     }
 
     private Station GetStationFromJsonObject(JSONObject object) throws JSONException {
-        int spacesToIndentEachLevel = 2;
-        System.out.println(object.toString(spacesToIndentEachLevel));
 
         double locationY = object.getDouble("locationY");
         double locationX = object.getDouble("locationX");
@@ -163,17 +161,25 @@ public class NMBSData {
     }
 
     private Vehicle GetVehicleFromJsonObject(JSONObject object) throws JSONException {
-        String name = object.getString("name");
-        String shortName = object.getString("shortname");
-        String id = object.getString("@id");
+        Vehicle vehicle = new Vehicle("", "", 0, 0, "");
 
-        Vehicle vehicle = new Vehicle(name, shortName, 0, 0, id);
+        if (object.has("vehicleinfo")){
+            JSONObject newObject = object.getJSONObject("vehicleinfo");
+            vehicle.setName(newObject.getString("name"));
+            vehicle.setShortName(newObject.getString("shortname"));
+            vehicle.setId(newObject.getString("@id"));
+            vehicle.setType(newObject.getString("type"));
+            vehicle.setNumber(newObject.getString("number"));
 
-        if (object.has("locationX") && object.has("locationY")){
-            double locationX = object.getDouble("locationX");
-            double locationY = object.getDouble("locationY");
+            double locationX = newObject.getDouble("locationX");
+            double locationY = newObject.getDouble("locationY");
             vehicle.setLocationX(locationX);
             vehicle.setLocationY(locationY);
+
+        } else {
+            vehicle.setName(object.getString("name"));
+            vehicle.setShortName(object.getString("shortname"));
+            vehicle.setId(object.getString("@id"));
         }
 
         if (object.has("stops")){
@@ -191,9 +197,14 @@ public class NMBSData {
     }
 
     private Departure GetDepartureFromJsonObject(JSONObject object) throws JSONException {
+        String stationName = "";
+        Station station = new Station();
+
         int delay = Helper.FromSecondsToMinutes(object.getInt("delay"));
-        String stationName = object.getString("station");
-        Station station = GetStationFromJsonObject(object.getJSONObject("stationinfo"));
+        if (object.has("station"))
+            stationName = object.getString("station");
+        if (object.has("stationinfo"))
+            station = GetStationFromJsonObject(object.getJSONObject("stationinfo"));
         Date time = new Date(object.getLong("time") * 1000);
         String vehicleName = object.getString("vehicle");
         Vehicle vehicle = GetVehicleFromJsonObject(object.getJSONObject("vehicleinfo"));
@@ -251,9 +262,14 @@ public class NMBSData {
     }
 
     private Arrival GetArrivalFromJsonObject(JSONObject object) throws JSONException {
-        int delay = Helper.FromSecondsToMinutes(object.getInt("delay"));;
-        String stationName = object.getString("station");
-        Station station = GetStationFromJsonObject(object.getJSONObject("stationinfo"));
+        String stationName = "";
+        Station station = new Station();
+
+        int delay = Helper.FromSecondsToMinutes(object.getInt("delay"));
+        if (object.has("station"))
+            stationName = object.getString("station");
+        if (object.has("stationinfo"))
+            station = GetStationFromJsonObject(object.getJSONObject("stationinfo"));
         Date time = new Date(object.getLong("time") * 1000);
         String vehicleName = object.getString("vehicle");
         Vehicle vehicle = GetVehicleFromJsonObject(object.getJSONObject("vehicleinfo"));
@@ -359,9 +375,15 @@ public class NMBSData {
             Departure departure = GetDepartureFromJsonObject(object.getJSONObject("departure"));
             TimeOnly timeBetween = TimeOnly.FromSecondsToTime(object.getInt("timeBetween"));
             String stationName = object.getString("station");
-            Station station = GetStationFromJsonObject(object.getJSONObject("stationInfo"));
+            Station station = GetStationFromJsonObject(object.getJSONObject("stationinfo"));
             String vehicle = object.getString("vehicle");
             String direction = object.getJSONObject("direction").getString("name");
+
+            arrival.setStation(station);
+            arrival.setStationName(stationName);
+
+            departure.setStation(station);
+            departure.setStationName(stationName);
 
             Via via = new Via(arrival, departure, timeBetween, stationName, station, vehicle, direction);
             vias.add(via);
@@ -376,9 +398,6 @@ public class NMBSData {
         for (int i = 0; i < array.length(); i++) {
             JSONObject object = array.getJSONObject(i);
 
-            int spacesToIndentEachLevel = 2;
-            System.out.println(object.toString(spacesToIndentEachLevel));
-
             int id = object.getInt("id");
             Departure departure = GetDepartureFromJsonObject(object.getJSONObject("departure"));
             Arrival arrival = GetArrivalFromJsonObject(object.getJSONObject("arrival"));
@@ -386,6 +405,12 @@ public class NMBSData {
             ArrayList<Alert> alerts = GetAlertsFromJsonArray(object.getJSONObject("alerts").getJSONArray("alert"));
 
             Connection connection = new Connection(id, departure, arrival, duration, alerts);
+
+            if (object.has("vias")){
+                ArrayList<Via> vias = GetViasFromJsonArray(object.getJSONObject("vias").getJSONArray("via"));
+                connection.setVias(vias);
+            }
+
             connections.add(connection);
 
         }
@@ -523,7 +548,7 @@ public class NMBSData {
     }
 
     public Vehicle GetVehicle(String id, LocalDateTime dateTime) throws JSONException {
-        String query = "https://api.irail.be/vehicle/?id=" + id + "&date=" + Helper.getDate(dateTime) + "&format=json&lang=en&alerts=false";
+        String query = "https://api.irail.be/vehicle/?id=" + id + "&date=" + Helper.getDate(dateTime) + "&format=json&lang=en&alerts=true";
         String responseBody = GetJsonString(query);
 
         JSONObject jsonObject = new JSONObject(responseBody);
@@ -532,7 +557,7 @@ public class NMBSData {
     }
 
     public Vehicle GetVehicles(LocalDateTime dateTime) throws JSONException {
-        String query = "https://api.irail.be/vehicle/" + "&date=" + Helper.getDate(dateTime) + "&format=json&lang=en&alerts=false";
+        String query = "https://api.irail.be/vehicle/" + "&date=" + Helper.getDate(dateTime) + "&format=json&lang=en&alerts=true";
         String responseBody = GetJsonString(query);
 
         JSONObject jsonObject = new JSONObject(responseBody);

@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,10 +26,13 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +52,7 @@ public class SearchFragment extends Fragment {
     private StationAdapter stationAdapter;
     private ProgressBar progressBar;
     private TextView depArr;
+    private ImageView backImage;
     private InputMethodManager inputMethodManager;
     private String name = "";
     private Context context;
@@ -74,6 +80,8 @@ public class SearchFragment extends Fragment {
         layout = fragView.findViewById(R.id.input_layout);
         progressBar = fragView.findViewById(R.id.progressBar);
         depArr = fragView.findViewById(R.id.dep_arr);
+        backImage = fragView.findViewById(R.id.back_image);
+
         depArr.setText(this.name);
 
         stations = new ArrayList<>();
@@ -83,6 +91,11 @@ public class SearchFragment extends Fragment {
         input.requestFocus();
         inputMethodManager = (InputMethodManager) context.getSystemService(context.INPUT_METHOD_SERVICE);
         inputMethodManager.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+
+        List<Station> memoryList = readFromMemory();
+        if (memoryList != null)
+            stations.addAll(memoryList);
+
 
         input.addTextChangedListener(new TextWatcher() {
             @Override
@@ -122,12 +135,18 @@ public class SearchFragment extends Fragment {
                 if (stations == null)
                     return;
                 Station station = stations.get(position);
+                writeToListMemory(station);
                 writeToMemory(name, station);
                 Intent intent = new Intent(context, MainActivity.class);
                 startActivity(intent);
             } catch (RuntimeException e){
                 showToast(e.getMessage());
             }
+        });
+
+        backImage.setOnClickListener(v -> {
+            FragmentManager fragmentManager = getParentFragmentManager();
+            fragmentManager.popBackStack();
         });
 
         return fragView;
@@ -141,6 +160,37 @@ public class SearchFragment extends Fragment {
         editor.putString(key, station.getId());
 
         editor.apply();
+    }
+
+    public void writeToListMemory(Station station){
+
+        List<Station> stationsList = readFromMemory();
+        if (stationsList == null)
+            stationsList = new ArrayList<>();
+
+        HashSet<Station> mylist = new HashSet<>();
+        mylist.add(station);
+        if (stationsList.size() < 3)
+            mylist.addAll(stationsList);
+        else
+            mylist.addAll(stationsList.subList(0, 3));
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String json = new Gson().toJson(mylist);
+        editor.putString("list_station", json);
+        editor.apply();
+    }
+
+    public List<Station> readFromMemory(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+
+        String json = sharedPreferences.getString("list_station", null);
+        if (json == null)
+            return null;
+        return new Gson().fromJson(json, new TypeToken<List<Station>>() {}.getType());
+
     }
 
 

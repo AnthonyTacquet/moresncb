@@ -5,6 +5,8 @@ import java.util.ArrayList;
 public class Vehicle {
     private String name;
     private String shortName;
+    private String number;
+    private String type;
     private double locationX;
     private double locationY;
     private String id;
@@ -65,6 +67,22 @@ public class Vehicle {
 
     public void setStops(ArrayList<Stop> stops) {
         this.stops = stops;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

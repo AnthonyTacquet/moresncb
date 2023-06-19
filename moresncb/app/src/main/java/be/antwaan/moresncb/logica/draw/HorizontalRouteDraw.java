@@ -16,12 +16,14 @@ import android.view.View;
 import androidx.core.content.ContextCompat;
 
 import be.antwaan.moresncb.R;
+import be.antwaan.moresncb.global.NMBS.Connection;
 
 public class HorizontalRouteDraw extends View {
 
     private Paint linePaint;
     private Paint circlePaint;
     private Bitmap iconBitmap;
+    private Connection connection;
 
     public HorizontalRouteDraw(Context context) {
         super(context);
@@ -31,6 +33,11 @@ public class HorizontalRouteDraw extends View {
     public HorizontalRouteDraw(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+    }
+
+    public HorizontalRouteDraw(Context context, Connection connection){
+        super(context);
+        this.connection = connection;
     }
 
     private void init() {
@@ -44,10 +51,23 @@ public class HorizontalRouteDraw extends View {
         iconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.baseline_train_24);
     }
 
+    public void setConnection(Connection connection){
+        this.connection = connection;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        if (connection == null || connection.getVias() == null){
+            defaultDraw(canvas, 0);
+        } else{
+            defaultDraw(canvas, connection.getVias().size());
+        }
+
+    }
+
+    private void defaultDraw(Canvas canvas, int stops){
         int width = getWidth();
         int height = getHeight();
 
@@ -59,6 +79,21 @@ public class HorizontalRouteDraw extends View {
         float circleX = circleRadius;
         float circleY = height / 2f;
 
+        // drawStartCircle
+        drawCircleIcon(canvas, circleX, circleY, circleRadius);
+
+        if (stops > 0){
+            float distance = width / (stops + 1f);
+            float total = distance;
+            for(int i = 0; i < stops; i++){
+                drawCircleIcon(canvas, total, circleY, circleRadius);
+                total += distance;
+            }
+        }
+
+    }
+
+    private void drawCircleIcon(Canvas canvas, float circleX, float circleY, float circleRadius){
         // Draw the circle background
         canvas.drawCircle(circleX, circleY, circleRadius, circlePaint);
 

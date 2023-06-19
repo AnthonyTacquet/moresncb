@@ -10,26 +10,36 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import be.antwaan.moresncb.global.NMBS.Alert;
+import be.antwaan.moresncb.global.NMBS.Arrival;
 import be.antwaan.moresncb.global.NMBS.Connection;
+import be.antwaan.moresncb.global.NMBS.Departure;
 import be.antwaan.moresncb.global.NMBS.Vehicle;
+import be.antwaan.moresncb.logica.adapter.JourneyAdapter;
 
 public class JourneyFragment extends Fragment {
 
     private Context context;
     private Connection connection;
-    private TextView departureTime, arrivalTime, departureLocation, destinationLocation, departurePlatform, destinationPlatform, trainLocation, alertMessage;
+    private TextView alertMessage;
     private ImageView mapsImage, compositionImage;
     private LinearLayout alertLayout;
+    private ListView journeyList;
+    private List<Pair<Departure, Arrival>> list;
+    private JourneyAdapter journeyAdapter;
 
     public JourneyFragment(){}
 
@@ -47,24 +57,47 @@ public class JourneyFragment extends Fragment {
         if (context == null)
             context = requireContext();
 
-        departurePlatform = fragView.findViewById(R.id.platform_field_departure);
-        destinationPlatform = fragView.findViewById(R.id.platform_field_destination);
-        departureTime = fragView.findViewById(R.id.departure_time);
-        arrivalTime = fragView.findViewById(R.id.arrival_time);
-        departureLocation = fragView.findViewById(R.id.departure_field);
-        destinationLocation = fragView.findViewById(R.id.arrival_field);
-        trainLocation = fragView.findViewById(R.id.train_loc);
-        mapsImage = fragView.findViewById(R.id.map_image);
-        compositionImage = fragView.findViewById(R.id.composition_image);
+
         alertLayout = fragView.findViewById(R.id.alert_layout);
         alertMessage = fragView.findViewById(R.id.alert_text);
+        mapsImage = fragView.findViewById(R.id.map_image);
+        compositionImage = fragView.findViewById(R.id.composition_image);
+        journeyList = fragView.findViewById(R.id.journey_list);
+
+        list = new ArrayList<>();
+        journeyAdapter = new JourneyAdapter(context, list);
+        journeyList.setAdapter(journeyAdapter);
 
         mapsImage.setOnClickListener(v -> navigateToMapFragment(connection.getDeparture().getVehicle()));
         compositionImage.setOnClickListener(v -> navigateToInfoFragment(connection.getDeparture().getVehicle()));
 
-        setFields();
+        fill();
 
         return fragView;
+    }
+
+    private void fill(){
+        if (connection == null)
+            return;
+        if (connection.getAlerts().size() >= 1){
+            Alert alert = connection.getAlerts().get(0);
+
+            alertMessage.setText(alert.getHeader());
+        } else {
+            alertLayout.setVisibility(View.GONE);
+        }
+
+        if (connection.getVias() == null || connection.getVias().size() == 0){
+            list.add(new Pair<>(connection.getDeparture(), connection.getArrival()));
+        } else {
+            list.add(new Pair<>(connection.getDeparture(), connection.getVias().get(0).getArrival()));
+            for (int i = 0; i < connection.getVias().size(); i++){
+                if (i > 0)
+                    list.add(new Pair<>(connection.getVias().get(i - 1).getDeparture(), connection.getVias().get(i - 1).getArrival()));
+            }
+            list.add(new Pair<>(connection.getVias().get(connection.getVias().size() - 1).getDeparture(), connection.getArrival()));
+
+        }
     }
 
     private void navigateToInfoFragment(Vehicle vehicle) {
@@ -83,31 +116,5 @@ public class JourneyFragment extends Fragment {
         fragmentTransaction.replace(R.id.frame_layout, newFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-    }
-
-    private void setFields(){
-        if (connection == null)
-            return;
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-
-        String depTime = sdf.format(connection.getDeparture().getDateTime());
-        String arrTime = sdf.format(connection.getArrival().getDateTime());
-
-        departurePlatform.setText("" + connection.getDeparture().getPlatform().getName());
-        destinationPlatform.setText("" + connection.getArrival().getPlatform().getName());
-        departureLocation.setText("" + connection.getDeparture().getStationName());
-        destinationLocation.setText("" + connection.getArrival().getStationName());
-        departureTime.setText(depTime);
-        arrivalTime.setText(arrTime);
-        trainLocation.setText(connection.getDeparture().getVehicle().getShortName() + " to " + connection.getArrival().getDirection());
-
-
-        if (connection.getAlerts().size() >= 1){
-            Alert alert = connection.getAlerts().get(0);
-
-            alertMessage.setText(alert.getHeader());
-        } else {
-            alertLayout.setVisibility(View.GONE);
-        }
     }
 }

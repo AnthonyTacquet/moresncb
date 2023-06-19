@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -45,6 +46,9 @@ public class RouteAdapter extends ArrayAdapter<Connection> {
             viewHolder.messageImage = convertView.findViewById(R.id.message_image);
             viewHolder.messageField = convertView.findViewById(R.id.message_text);
             viewHolder.horizontalRouteDraw = convertView.findViewById(R.id.route_draw);
+            viewHolder.delayLayout = convertView.findViewById(R.id.delay_layout);
+            viewHolder.departureDelay = convertView.findViewById(R.id.departure_delay);
+            viewHolder.arrivalDelay = convertView.findViewById(R.id.arrival_delay);
 
             convertView.setTag(viewHolder);
         } else {
@@ -58,15 +62,21 @@ public class RouteAdapter extends ArrayAdapter<Connection> {
             return convertView;
 
         if (item.getDeparture().getDelay() == 0)
-            viewHolder.departureTime.setText(sdf.format(item.getDeparture().getDateTime()));
+            viewHolder.departureDelay.setText("");
         else
-            viewHolder.departureTime.setText(sdf.format(item.getDeparture().getDateTime()) + " +" + item.getDeparture().getDelay());
+            viewHolder.departureDelay.setText("+" + item.getDeparture().getDelay());
 
         if (item.getArrival().getDelay() == 0)
-            viewHolder.arrivalTime.setText(sdf.format(item.getArrival().getDateTime()));
+            viewHolder.arrivalDelay.setText("");
         else
-            viewHolder.arrivalTime.setText(sdf.format(item.getArrival().getDateTime()) + " +" + item.getArrival().getDelay());
+            viewHolder.arrivalDelay.setText("+" + item.getArrival().getDelay());
 
+        if (item.getArrival().getDelay() == 0 && item.getDeparture().getDelay() == 0)
+            viewHolder.delayLayout.setVisibility(View.GONE);
+
+
+        viewHolder.departureTime.setText(sdf.format(item.getDeparture().getDateTime()));
+        viewHolder.arrivalTime.setText(sdf.format(item.getArrival().getDateTime()));
         viewHolder.platformField.setText("Platform " + item.getDeparture().getPlatformNumber());
         viewHolder.durationField.setText("" + item.getDuration().toMinutes() + " min");
 
@@ -91,11 +101,16 @@ public class RouteAdapter extends ArrayAdapter<Connection> {
             viewHolder.messageImage.setVisibility(View.GONE);
         }
 
+        viewHolder.horizontalRouteDraw.setConnection(item);
+
         return convertView;
     }
 
     private static class ViewHolder {
         HorizontalRouteDraw horizontalRouteDraw;
+        LinearLayout delayLayout;
+        TextView departureDelay;
+        TextView arrivalDelay;
         TextView departureTime;
         TextView arrivalTime;
         TextView platformField;

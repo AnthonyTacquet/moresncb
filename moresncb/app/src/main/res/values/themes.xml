@@ -3,6 +3,7 @@
     <style name="Base.Theme.Moresncb" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="Theme.Moresncb" parent="Base.Theme.Moresncb" />
@@ -17,6 +18,30 @@
         <item name="colorOnSurface">@color/white</item>
         <item name="colorPrimary">@color/white</item>
         <item name="colorSecondary">@color/white</item>
+    </style>
+
+    <style name="BackGround">
+        <item name="android:background">@color/lightgrey</item>
+    </style>
+
+    <style name="HomeLinearLayout">
+        <item name="android:background">@color/lightblue</item>
+    </style>
+
+    <style name="HomeFirstImage">
+        <item name="android:src">@drawable/home_background_light</item>
+    </style>
+
+    <style name="HomeSecondImage">
+        <item name="android:src">@drawable/home_foreground_light</item>
+    </style>
+
+    <style name="SettingsBox">
+        <item name="android:background">@color/lightgrey</item>
+    </style>
+
+    <style name="NmbsLogo">
+        <item name="android:tint">@color/black</item>
     </style>
 
 </resources>

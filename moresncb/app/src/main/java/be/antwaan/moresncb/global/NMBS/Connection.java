@@ -12,6 +12,7 @@ public class Connection {
     private Arrival arrival;
     private Duration duration;
     private ArrayList<Alert> alerts;
+    private ArrayList<Via> vias;
 
     public Connection(int id, Departure departure, Arrival arrival, Duration duration, ArrayList<Alert> alerts) {
         this.id = id;
@@ -59,6 +60,14 @@ public class Connection {
 
     public void setAlerts(ArrayList<Alert> alerts) {
         this.alerts = alerts;
+    }
+
+    public ArrayList<Via> getVias() {
+        return vias;
+    }
+
+    public void setVias(ArrayList<Via> vias) {
+        this.vias = vias;
     }
 
     @Override

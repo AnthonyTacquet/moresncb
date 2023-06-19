@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".JourneyFragment">
+    tools:context=".JourneyFragment"
+    style="@style/BackGround">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/lightblue"
+            style="@style/HomeLinearLayout"
             android:padding="10dp">
 
             <LinearLayout
@@ -92,100 +93,11 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:orientation="horizontal"
-                    android:layout_marginVertical="10dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/departure_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="12:00"/>
-
-                        <TextView
-                            android:id="@+id/arrival_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="12:00"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_marginHorizontal="10dp">
-
-                        <be.antwaan.moresncb.logica.draw.VerticalRouteDraw
-                            android:layout_width="20dp"
-                            android:layout_height="match_parent"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_weight="1">
-
-                            <TextView
-                                android:id="@+id/departure_field"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Departure"/>
-
-                            <TextView
-                                android:id="@+id/platform_field_departure"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Platform"/>
-
-                            <TextView
-                                android:id="@+id/train_loc"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textSize="10sp"
-                                android:text="trainnumber to location"/>
-
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/arrival_field"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Departure"/>
-
-                            <TextView
-                                android:id="@+id/platform_field_destination"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Platform"/>
-
-
-                        </LinearLayout>
-                    </LinearLayout>
-
-                </LinearLayout>
+               <ListView
+                   android:id="@+id/journey_list"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:layout_marginVertical="10dp"/>
 
             </LinearLayout>
 

@@ -3,18 +3,18 @@ package be.antwaan.moresncb;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -40,6 +40,7 @@ public class RouteFragment extends Fragment {
     private ProgressBar progressBar;
     private ListView listView;
     private RouteAdapter routeAdapter;
+    private ImageView backView;
     private int results = 6;
 
     public RouteFragment(){
@@ -69,6 +70,7 @@ public class RouteFragment extends Fragment {
         fromInput = fragView.findViewById(R.id.from_input_route);
         toLayout = fragView.findViewById(R.id.to_input_layout_route);
         toInput = fragView.findViewById(R.id.to_input_route);
+        backView = fragView.findViewById(R.id.back_image);
 
         connections = new ArrayList<>();
         routeAdapter = new RouteAdapter(getContext(), connections);
@@ -93,6 +95,11 @@ public class RouteFragment extends Fragment {
 
         });
 
+        backView.setOnClickListener(v -> {
+            FragmentManager fragmentManager = getParentFragmentManager();
+            fragmentManager.popBackStack();
+        });
+
         return fragView;
     }
 
@@ -104,7 +111,6 @@ public class RouteFragment extends Fragment {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
-
 
     private void setFields(){
 

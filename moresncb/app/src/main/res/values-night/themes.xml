@@ -3,5 +3,43 @@
     <style name="Base.Theme.Moresncb" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="android:textSize">16sp</item>
+
     </style>
+
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeColor">@color/lightgrey</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="hintTextColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorPrimary">@color/lightgrey</item>
+        <item name="colorSecondary">@color/lightgrey</item>
+    </style>
+
+    <style name="BackGround">
+        <item name="android:background">@color/black</item>
+    </style>
+
+    <style name="HomeLinearLayout">
+        <item name="android:background">@color/darkgrey</item>
+    </style>
+
+    <style name="HomeFirstImage">
+        <item name="android:src">@drawable/home_background_dark</item>
+    </style>
+
+    <style name="HomeSecondImage">
+        <item name="android:src">@drawable/home_foreground_dark</item>
+    </style>
+
+    <style name="SettingsBox">
+    </style>
+
+    <style name="NmbsLogo">
+        <item name="android:tint">@color/white</item>
+    </style>
+
 </resources>
