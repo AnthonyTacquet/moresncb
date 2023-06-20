@@ -24,6 +24,10 @@
         <item name="android:background">@color/lightgrey</item>
     </style>
 
+    <style name="BackGroundWhiteGrey">
+        <item name="android:background">@color/white</item>
+    </style>
+
     <style name="HomeLinearLayout">
         <item name="android:background">@color/lightblue</item>
     </style>
