@@ -40,7 +40,6 @@ public class InfoFragment extends Fragment {
     private Composition composition;
     private CompositionManager compositionManager;
     private ProgressBar progressBar;
-    private RecyclerView listView;
     private RecyclerView recyclerView;
     private IconAdapter iconAdapter;
     private List<Drawable> icons;
@@ -59,17 +58,14 @@ public class InfoFragment extends Fragment {
         View fragView = inflater.inflate(R.layout.fragment_info, container, false);
 
         progressBar = fragView.findViewById(R.id.progressBar);
-        listView = fragView.findViewById(R.id.icon_list);
         recyclerView = fragView.findViewById(R.id.recycler_view);
 
         if (context == null)
             context = requireContext();
 
-        listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         icons = new ArrayList<>();
 
         iconAdapter = new IconAdapter(icons);
-        listView.setAdapter(iconAdapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -78,51 +74,11 @@ public class InfoFragment extends Fragment {
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    int centerItemPosition = layoutManager.findFirstVisibleItemPosition() + layoutManager.getChildCount() / 2;
-                    if (centerItemPosition >= 0 && centerItemPosition < layoutManager.getItemCount()) {
-                        Unit unit = compositionManager.getUnits().get(centerItemPosition);
-                        displayUnit(unit);
-                    }
-                }
-            }
-        });
-
-
         progressBar.setVisibility(View.VISIBLE);
 
         loadData(new NMBSData());
 
         return fragView;
-    }
-
-
-    private void displayUnit(Unit unit){
-        List<Drawable> newIcons = new ArrayList<>();
-        if (unit.hasPrmSection())
-            newIcons.add(ContextCompat.getDrawable(context, R.drawable.baseline_accessible_24));
-        if (unit.hasBikeSection())
-            newIcons.add(ContextCompat.getDrawable(context, R.drawable.baseline_directions_bike_24));
-        if (unit.hasAirco())
-            newIcons.add(ContextCompat.getDrawable(context, R.drawable.fan_solid));
-        if (unit.hasTables())
-            newIcons.add(ContextCompat.getDrawable(context, R.drawable.baseline_table_bar_24));
-        if (unit.hasHeating())
-            newIcons.add(ContextCompat.getDrawable(context, R.drawable.fire_solid));
-        if (unit.hasLuggageSection())
-            newIcons.add(ContextCompat.getDrawable(context, R.drawable.suitcase_solid));
-        if (unit.hasToilets())
-            newIcons.add(ContextCompat.getDrawable(context, R.drawable.restroom_solid));
-        if (unit.hasSecondClassOutlets() || unit.hasFirstClassOutlets())
-            newIcons.add(ContextCompat.getDrawable(context, R.drawable.plug_solid));
-
-        icons.clear();
-        icons.addAll(newIcons);
-        iconAdapter.notifyDataSetChanged();
     }
 
 

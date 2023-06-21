@@ -1,5 +1,6 @@
 package be.antwaan.moresncb.logica.adapter;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ public class IconAdapter extends RecyclerView.Adapter<IconAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Drawable icon = icons.get(position);
+        icon.setTint(Color.WHITE);
         holder.iconImage.setImageDrawable(icon);
     }
 

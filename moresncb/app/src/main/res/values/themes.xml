@@ -20,6 +20,10 @@
         <item name="colorSecondary">@color/white</item>
     </style>
 
+    <style name="IconList">
+        <item name="android:textColor">@color/darkgrey</item>
+    </style>
+
     <style name="BackGround">
         <item name="android:background">@color/lightgrey</item>
     </style>
