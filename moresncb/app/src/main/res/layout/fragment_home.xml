@@ -108,6 +108,7 @@
                     </LinearLayout>
 
                     <ImageView
+                        android:id="@+id/switch_button"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:paddingStart="5dp"
@@ -119,33 +120,33 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="15dp"
-                style="@style/SettingsBox"
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="15dp"
+            style="@style/SettingsBox"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/setting_time"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@color/lightblue"
+                android:text="Departure"
+                android:layout_weight="1"
+                android:textSize="15sp"
                 android:layout_gravity="center_vertical"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"/>
 
-                <TextView
-                    android:id="@+id/setting_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textColor="@color/lightblue"
-                    android:text="Departure"
-                    android:layout_weight="1"
-                    android:textSize="15sp"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/sliders_solid"
-                    android:tint="@color/lightblue"/>
-
-            </LinearLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/sliders_solid"
+                android:tint="@color/lightblue"/>
 
         </LinearLayout>
 

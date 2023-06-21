@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 
 import be.antwaan.moresncb.data.NMBSData;
 import be.antwaan.moresncb.global.NMBS.Station;
+import be.antwaan.moresncb.logica.Memory;
 import be.antwaan.moresncb.logica.adapter.IconAdapter;
 import be.antwaan.moresncb.logica.adapter.StationAdapter;
 
@@ -57,6 +58,7 @@ public class SearchFragment extends Fragment {
     private String name = "";
     private Context context;
 
+    private Memory memory;
     public SearchFragment(){
         allStations = new ArrayList<>();
         name = "Destination";
@@ -74,6 +76,7 @@ public class SearchFragment extends Fragment {
         View fragView = inflater.inflate(R.layout.fragment_search, container, false);
         if (context == null)
             context = requireContext();
+        memory = new Memory(context);
 
         listView = fragView.findViewById(R.id.station_list);
         input = fragView.findViewById(R.id.input_field);
@@ -92,7 +95,7 @@ public class SearchFragment extends Fragment {
         inputMethodManager = (InputMethodManager) context.getSystemService(context.INPUT_METHOD_SERVICE);
         inputMethodManager.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
 
-        List<Station> memoryList = readFromMemory();
+        List<Station> memoryList = memory.readListFromMemory();
         if (memoryList != null)
             stations.addAll(memoryList);
 
@@ -135,8 +138,8 @@ public class SearchFragment extends Fragment {
                 if (stations == null)
                     return;
                 Station station = stations.get(position);
-                writeToListMemory(station);
-                writeToMemory(name, station);
+                memory.writeToListMemory(station);
+                memory.writeToMemory(name, station.getId());
                 Intent intent = new Intent(context, MainActivity.class);
                 startActivity(intent);
             } catch (RuntimeException e){
@@ -151,48 +154,6 @@ public class SearchFragment extends Fragment {
 
         return fragView;
     }
-
-    public void writeToMemory(String key, Station station){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", context.MODE_PRIVATE);
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        editor.putString(key, station.getId());
-
-        editor.apply();
-    }
-
-    public void writeToListMemory(Station station){
-
-        List<Station> stationsList = readFromMemory();
-        if (stationsList == null)
-            stationsList = new ArrayList<>();
-
-        HashSet<Station> mylist = new HashSet<>();
-        mylist.add(station);
-        if (stationsList.size() < 3)
-            mylist.addAll(stationsList);
-        else
-            mylist.addAll(stationsList.subList(0, 3));
-
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        String json = new Gson().toJson(mylist);
-        editor.putString("list_station", json);
-        editor.apply();
-    }
-
-    public List<Station> readFromMemory(){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-
-        String json = sharedPreferences.getString("list_station", null);
-        if (json == null)
-            return null;
-        return new Gson().fromJson(json, new TypeToken<List<Station>>() {}.getType());
-
-    }
-
 
     private void showToast(String message) {
         getActivity().runOnUiThread(() -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show());

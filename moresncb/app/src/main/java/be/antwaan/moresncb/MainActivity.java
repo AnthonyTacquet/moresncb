@@ -5,11 +5,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 
+import java.time.LocalDateTime;
+
 import be.antwaan.moresncb.databinding.ActivityMainBinding;
+import be.antwaan.moresncb.global.Enum.DepartureOrArrival;
+import be.antwaan.moresncb.global.NMBS.Station;
+import be.antwaan.moresncb.logica.Memory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
     private void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

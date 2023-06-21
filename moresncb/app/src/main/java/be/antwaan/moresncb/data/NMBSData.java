@@ -16,13 +16,56 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import be.antwaan.moresncb.global.Enum.*;
 import be.antwaan.moresncb.global.Main.*;
 import be.antwaan.moresncb.global.NMBS.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class NMBSData {
-    private static HttpURLConnection connection;
+
+    private OkHttpClient httpClient;
+
+    private String getJsonString(String query) {
+        String responseContent = "";
+
+        try {
+            OkHttpClient httpClient = new OkHttpClient.Builder()
+                    .callTimeout(10, TimeUnit.SECONDS)
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(query)
+                    .get()
+                    .build();
+
+            Response response = httpClient.newCall(request).execute();
+            int statusCode = response.code();
+
+            if (statusCode > 299) {
+                responseContent = response.body().string();
+                throw new Exception(responseContent);
+            } else {
+                ResponseBody responseBody = response.body();
+                if (responseBody != null) {
+                    responseContent = responseBody.string();
+                }
+            }
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+
+        return responseContent;
+    }
+
+   /* private static HttpURLConnection connection;
 
     private String GetJsonString(String query) {
         BufferedReader reader;
@@ -61,8 +104,8 @@ public class NMBSData {
             connection.disconnect();
         }
         return responseContent.toString();
-    }
-
+    }*/
+/*
     public static String PostOccupancy(String query, String stationId, String connectionId, String vehicleId, Occupancy occupancy, LocalDateTime dateTime) throws Exception {
         BufferedReader reader;
         String line;
@@ -112,10 +155,10 @@ public class NMBSData {
         }
         return responseContent.toString();
     }
-
+*/
 
     public ArrayList<Station> GetStations() throws JSONException {
-        String responseBody = GetJsonString("https://api.irail.be/stations/?format=json&lang=en");
+        String responseBody = getJsonString("https://api.irail.be/stations/?format=json&lang=en");
 
         JSONObject jsonObject = new JSONObject(responseBody);
         JSONArray array = jsonObject.getJSONArray("station");
@@ -515,7 +558,7 @@ public class NMBSData {
         String query = "https://api.irail.be/connections/?from=" + departure.getName() + "&to=" + arrival.getName() + "&date="
                 + Helper.getDate(dateTime) + "&time=" + Helper.getTime(dateTime) +
                 "&timesel=" + deporarr.toString().toLowerCase() + "&format=json&lang=en&typeOfTransport=automatic&alerts=true&results=" + results;
-        String responseBody = GetJsonString(query);
+        String responseBody = getJsonString(query);
 
         JSONObject jsonObject = new JSONObject(responseBody);
         JSONArray array = jsonObject.getJSONArray("connection");
@@ -527,7 +570,7 @@ public class NMBSData {
         String query = "https://api.irail.be/liveboard/?station=" + station.getName() + "&date=" + Helper.getDate(dateTime) + "&time=" + Helper.getTime(dateTime) +
                 "&arrdep=departure&lang=en&format=json&alerts=false";
 
-        String responseBody = GetJsonString(query);
+        String responseBody = getJsonString(query);
 
         JSONObject jsonObject = new JSONObject(responseBody);
         JSONArray array = jsonObject.getJSONObject("departures").getJSONArray("departure");
@@ -539,7 +582,7 @@ public class NMBSData {
         String query = "https://api.irail.be/liveboard/?station=" + station.getName() + "&date=" + Helper.getDate(dateTime) + "&time=" + Helper.getTime(dateTime) +
                 "&arrdep=arrival&lang=en&format=json&alerts=false";
 
-        String responseBody = GetJsonString(query);
+        String responseBody = getJsonString(query);
 
         JSONObject jsonObject = new JSONObject(responseBody);
         JSONArray array = jsonObject.getJSONObject("arrivals").getJSONArray("arrival");
@@ -549,7 +592,7 @@ public class NMBSData {
 
     public Vehicle GetVehicle(String id, LocalDateTime dateTime) throws JSONException {
         String query = "https://api.irail.be/vehicle/?id=" + id + "&date=" + Helper.getDate(dateTime) + "&format=json&lang=en&alerts=true";
-        String responseBody = GetJsonString(query);
+        String responseBody = getJsonString(query);
 
         JSONObject jsonObject = new JSONObject(responseBody);
 
@@ -558,7 +601,7 @@ public class NMBSData {
 
     public Vehicle GetVehicles(LocalDateTime dateTime) throws JSONException {
         String query = "https://api.irail.be/vehicle/" + "&date=" + Helper.getDate(dateTime) + "&format=json&lang=en&alerts=true";
-        String responseBody = GetJsonString(query);
+        String responseBody = getJsonString(query);
 
         JSONObject jsonObject = new JSONObject(responseBody);
 
@@ -567,7 +610,7 @@ public class NMBSData {
 
     public ArrayList<Disturbance> GetDisturbance() throws JSONException {
         String query = "https://api.irail.be/disturbances/?format=json&lang=en";
-        String responseBody = GetJsonString(query);
+        String responseBody = getJsonString(query);
 
         JSONObject jsonObject = new JSONObject(responseBody);
         JSONArray array = jsonObject.getJSONArray("disturbance");
@@ -578,7 +621,7 @@ public class NMBSData {
     public Composition GetComposition(String trainId) throws JSONException {
         String query = "https://api.irail.be/composition/?format=json&id='" + trainId + "'&data=''&lang=en";
 
-        String responseBody = GetJsonString(query);
+        String responseBody = getJsonString(query);
 
         JSONObject jsonObject = new JSONObject(responseBody);
 

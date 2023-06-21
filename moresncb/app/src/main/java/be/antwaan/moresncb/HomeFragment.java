@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import be.antwaan.moresncb.data.NMBSData;
 import be.antwaan.moresncb.global.Enum.DepartureOrArrival;
 import be.antwaan.moresncb.global.NMBS.Station;
+import be.antwaan.moresncb.logica.Memory;
 
 
 public class HomeFragment extends Fragment {
@@ -38,11 +39,13 @@ public class HomeFragment extends Fragment {
     private TextInputEditText fromInput, toInput;
     private TextInputLayout fromLayout, toLayout;
     private TextView settingTime;
+    private ImageView switchButton;
     private Dialog settingTimeDialog;
     private ArrayList<Station> stations;
-    private LocalDateTime dateTime;
+    private LocalDateTime dateTime = LocalDateTime.now();
     private DepartureOrArrival departureOrArrival = DepartureOrArrival.DEPARTURE;
     private LocalDateTime selectedDateTime = LocalDateTime.now();
+    private Memory memory;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,9 +56,10 @@ public class HomeFragment extends Fragment {
         toLayout = fragView.findViewById(R.id.to_input_layout);
         toInput = fragView.findViewById(R.id.to_input);
         settingTime = fragView.findViewById(R.id.setting_time);
+        switchButton = fragView.findViewById(R.id.switch_button);
         settingTimeDialog = new Dialog(getContext());
 
-        dateTime = LocalDateTime.now();
+        memory = new Memory(getContext());
         loadData(new NMBSData());
 
         fromLayout.getEditText().setOnTouchListener((v, event) -> {
@@ -67,6 +71,13 @@ public class HomeFragment extends Fragment {
         toLayout.getEditText().setOnTouchListener((v, event) -> {
             navigateToSearchFragment("Destination");
             return true;
+        });
+
+        switchButton.setOnClickListener(v -> {
+            String temp = memory.readFromMemory("Destination");
+            memory.writeToMemory("Destination", memory.readFromMemory("Departure"));
+            memory.writeToMemory("Departure", temp);
+            loadMemory();
         });
 
         settingTime.setOnClickListener(v -> showTimeDialog(fragView));
@@ -111,7 +122,7 @@ public class HomeFragment extends Fragment {
             dayView.setText(selectedDateTime.format(dayMonthYearFormatter));
         });
 
-        cancelView.setOnClickListener(v -> closeDialog(dateTime, null));
+        cancelView.setOnClickListener(v -> settingTimeDialog.dismiss());
 
         submitView.setOnClickListener(v -> {
             dateTime = LocalDateTime.of(selectedDateTime.getYear(), selectedDateTime.getMonthValue(), selectedDateTime.getDayOfMonth(), hourPicker.getValue(), minutePicker.getValue());
@@ -141,18 +152,17 @@ public class HomeFragment extends Fragment {
     }
 
     private void closeDialog(LocalDateTime localDateTime, DepartureOrArrival depArr){
-        if (depArr == null)
-            depArr = departureOrArrival;
-        String enumString = depArr.name().toLowerCase();
+        if (depArr != null)
+            departureOrArrival = depArr;
+        String enumString = departureOrArrival.name().toLowerCase();
 
         String formattedString = Character.toUpperCase(enumString.charAt(0)) + enumString.substring(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-        if (localDateTime == null)
-            localDateTime = dateTime;
-        String dateString = localDateTime.format(formatter);
+        if (localDateTime != null)
+            dateTime = localDateTime;
+        String dateString = dateTime.format(formatter);
 
         settingTime.setText(formattedString + ": " + dateString);
-        writeToMemory(localDateTime, depArr);
         settingTimeDialog.dismiss();
     }
 
@@ -165,8 +175,8 @@ public class HomeFragment extends Fragment {
     private void navigateToSearchFragment(String name) {
         if (stations == null)
             return;
-        SearchFragment newFragment = new SearchFragment(getContext(), name, stations);
-        FragmentManager fragmentManager = getParentFragmentManager();
+        SearchFragment newFragment = new SearchFragment(requireContext(), name, stations);
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, newFragment);
         fragmentTransaction.addToBackStack(null);
@@ -174,8 +184,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void navigateToRouteFragment(Station departure, Station destination) {
-        RouteFragment newFragment = new RouteFragment(getContext(), departure, destination, dateTime, departureOrArrival);
-        FragmentManager fragmentManager = getParentFragmentManager();
+        RouteFragment newFragment = new RouteFragment(departure, destination, dateTime, departureOrArrival);
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, newFragment);
         fragmentTransaction.addToBackStack(null);
@@ -186,7 +196,7 @@ public class HomeFragment extends Fragment {
         Thread thread = new Thread(() -> {
             try {
                 stations = nmbsData.GetStations();
-                getActivity().runOnUiThread(() -> loadMemory());
+                requireActivity().runOnUiThread(() -> loadMemory());
             } catch (JSONException e) {
                 showToast(e.getMessage());
             }
@@ -195,22 +205,25 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadMemory(){
-        String departure = readFromMemory("Departure");
-        String destination = readFromMemory("Destination");
-        String dateString = readFromMemory("DateTime");
-        String depArr = readFromMemory("DepArr");
+        String departure = memory.readFromMemory("Departure");
+        String destination =  memory.readFromMemory("Destination");
+        String dateString =  memory.readFromMemory("DateTime");
+        String depArr =  memory.readFromMemory("DepArr");
 
         if (departure != null)
             fromInput.setText(stations.stream().filter(e -> e.getId().equals(departure)).findFirst().get().getName());
+        else
+            fromInput.setText("");
         if (destination != null)
-            fromInput.setText(stations.stream().filter(e -> e.getId().equals(destination)).findFirst().get().getName());
+            toInput.setText(stations.stream().filter(e -> e.getId().equals(destination)).findFirst().get().getName());
+        else
+            toInput.setText("");
 
         if (dateString != null && depArr != null){
             departureOrArrival = DepartureOrArrival.valueOf(depArr);
             dateTime = LocalDateTime.parse(dateString);
-            closeDialog(null, null);
-        } else
-            closeDialog(null, null);
+        }
+        closeDialog(null, null);
 
 
         if (departure != null && destination != null)
@@ -219,35 +232,8 @@ public class HomeFragment extends Fragment {
 
     }
 
-    public void writeToMemory(LocalDateTime dateTime, DepartureOrArrival depArr){
-        if (getContext() == null)
-            return;
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyPreferences", getContext().MODE_PRIVATE);
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        if (dateTime != null)
-            editor.putString("DateTime", dateTime.toString());
-        else
-            editor.putString("DateTime", null);
-
-        if (depArr != null)
-            editor.putString("DepArr", depArr.name());
-        else
-            editor.putString("DepArr", null);
-
-        editor.apply();
-    }
-
-    public String readFromMemory(String key){
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyPreferences", getContext().MODE_PRIVATE);
-
-        String value = sharedPreferences.getString(key, null);
-        return value;
-    }
-
     private void showToast(String message) {
-        getActivity().runOnUiThread(() -> Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show());
+        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show());
     }
 
 
