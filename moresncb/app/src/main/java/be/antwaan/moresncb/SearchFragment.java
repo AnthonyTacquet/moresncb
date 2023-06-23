@@ -15,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -92,8 +93,10 @@ public class SearchFragment extends Fragment {
         listView.setAdapter(stationAdapter);
 
         input.requestFocus();
-        inputMethodManager = (InputMethodManager) context.getSystemService(context.INPUT_METHOD_SERVICE);
-        inputMethodManager.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+        input.postDelayed(() -> {
+            inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+        }, 200);
 
         List<Station> memoryList = memory.readListFromMemory();
         if (memoryList != null)

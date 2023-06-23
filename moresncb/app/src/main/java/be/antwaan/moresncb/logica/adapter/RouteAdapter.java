@@ -12,23 +12,33 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import be.antwaan.moresncb.R;
 import be.antwaan.moresncb.global.NMBS.Alert;
 import be.antwaan.moresncb.global.NMBS.Connection;
 import be.antwaan.moresncb.global.NMBS.Station;
+import be.antwaan.moresncb.logica.Memory;
 import be.antwaan.moresncb.logica.draw.HorizontalRouteDraw;
 
 public class RouteAdapter extends ArrayAdapter<Connection> {
     private LayoutInflater inflater;
+    private Context context;
+    private Memory memory;
+    private ArrayList<Connection> favorites;
 
     public RouteAdapter(Context context, List<Connection> items) {
         super(context, 0, items);
         inflater = LayoutInflater.from(context);
+        this.context = context;
+        memory = new Memory(context);
+        favorites = memory.readFromConnectionMemory();
     }
 
     @Override
@@ -49,6 +59,7 @@ public class RouteAdapter extends ArrayAdapter<Connection> {
             viewHolder.delayLayout = convertView.findViewById(R.id.delay_layout);
             viewHolder.departureDelay = convertView.findViewById(R.id.departure_delay);
             viewHolder.arrivalDelay = convertView.findViewById(R.id.arrival_delay);
+            viewHolder.favoriteButton = convertView.findViewById(R.id.favorite_button);
 
             convertView.setTag(viewHolder);
         } else {
@@ -102,8 +113,51 @@ public class RouteAdapter extends ArrayAdapter<Connection> {
         }
 
         viewHolder.horizontalRouteDraw.setConnection(item);
+        checkStar(item, viewHolder);
+
+        viewHolder.favoriteButton.setOnClickListener(v -> {
+            if (favorites.contains(item)){
+                favorites.remove(item);
+                memory.removeConnectionFromMemory(item);
+
+                int colorRes = R.color.white;
+                int color = ContextCompat.getColor(context, colorRes);
+                viewHolder.favoriteButton.setColorFilter(color);
+
+                int drawableRes = R.drawable.star_regular;
+                viewHolder.favoriteButton.setImageResource(drawableRes);
+            } else {
+                int colorRes = R.color.gold;
+                int color = ContextCompat.getColor(context, colorRes);
+                viewHolder.favoriteButton.setColorFilter(color);
+
+                int drawableRes = R.drawable.star_solid;
+                viewHolder.favoriteButton.setImageResource(drawableRes);
+
+                memory.writeToConnectionMemory(item);
+            }
+        });
+
 
         return convertView;
+    }
+
+    private void checkStar(Connection connection, ViewHolder viewHolder){
+        if (favorites.contains(connection)) {
+            int colorRes = R.color.gold;
+            int color = ContextCompat.getColor(context, colorRes);
+            viewHolder.favoriteButton.setColorFilter(color);
+
+            int drawableRes = R.drawable.star_solid;
+            viewHolder.favoriteButton.setImageResource(drawableRes);
+        } else {
+            int colorRes = R.color.white;
+            int color = ContextCompat.getColor(context, colorRes);
+            viewHolder.favoriteButton.setColorFilter(color);
+
+            int drawableRes = R.drawable.star_regular;
+            viewHolder.favoriteButton.setImageResource(drawableRes);
+        }
     }
 
     private static class ViewHolder {
@@ -115,7 +169,7 @@ public class RouteAdapter extends ArrayAdapter<Connection> {
         TextView arrivalTime;
         TextView platformField;
         TextView durationField;
-        ImageView messageImage;
+        ImageView messageImage, favoriteButton;
         TextView messageField;
     }
 }

@@ -6,6 +6,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -28,18 +29,22 @@ import be.antwaan.moresncb.global.NMBS.Arrival;
 import be.antwaan.moresncb.global.NMBS.Connection;
 import be.antwaan.moresncb.global.NMBS.Departure;
 import be.antwaan.moresncb.global.NMBS.Vehicle;
+import be.antwaan.moresncb.logica.Memory;
 import be.antwaan.moresncb.logica.adapter.JourneyAdapter;
+import be.antwaan.moresncb.logica.adapter.RouteAdapter;
 
 public class JourneyFragment extends Fragment {
 
     private Context context;
     private Connection connection;
     private TextView alertMessage;
-    private ImageView mapsImage, compositionImage;
+    private ImageView mapsImage, compositionImage, starImage;
     private LinearLayout alertLayout;
     private ListView journeyList;
     private List<Pair<Departure, Arrival>> list;
     private JourneyAdapter journeyAdapter;
+    private Memory memory;
+    private ArrayList<Connection> favorites = new ArrayList<>();
 
     public JourneyFragment(){}
 
@@ -57,23 +62,69 @@ public class JourneyFragment extends Fragment {
         if (context == null)
             context = requireContext();
 
+        memory = new Memory(requireContext());
+        favorites = memory.readFromConnectionMemory();
 
         alertLayout = fragView.findViewById(R.id.alert_layout);
         alertMessage = fragView.findViewById(R.id.alert_text);
         mapsImage = fragView.findViewById(R.id.map_image);
         compositionImage = fragView.findViewById(R.id.composition_image);
         journeyList = fragView.findViewById(R.id.journey_list);
+        starImage = fragView.findViewById(R.id.star_image);
 
         list = new ArrayList<>();
         journeyAdapter = new JourneyAdapter(context, list);
         journeyList.setAdapter(journeyAdapter);
+
+        checkStar();
 
         mapsImage.setOnClickListener(v -> navigateToMapFragment(connection.getDeparture().getVehicle()));
         compositionImage.setOnClickListener(v -> navigateToInfoFragment(connection.getDeparture().getVehicle()));
 
         fill();
 
+        starImage.setOnClickListener(v -> {
+            if (favorites.contains(connection)){
+                favorites.remove(connection);
+                memory.removeConnectionFromMemory(connection);
+
+                int colorRes = R.color.white;
+                int color = ContextCompat.getColor(context, colorRes);
+                starImage.setColorFilter(color);
+
+                int drawableRes = R.drawable.star_regular;
+                starImage.setImageResource(drawableRes);
+            } else {
+                int colorRes = R.color.gold;
+                int color = ContextCompat.getColor(context, colorRes);
+                starImage.setColorFilter(color);
+
+                int drawableRes = R.drawable.star_solid;
+                starImage.setImageResource(drawableRes);
+
+                memory.writeToConnectionMemory(connection);
+            }
+        });
+
         return fragView;
+    }
+
+    private void checkStar(){
+        if (favorites.contains(connection)) {
+            int colorRes = R.color.gold;
+            int color = ContextCompat.getColor(context, colorRes);
+            starImage.setColorFilter(color);
+
+            int drawableRes = R.drawable.star_solid;
+            starImage.setImageResource(drawableRes);
+        } else {
+            int colorRes = R.color.white;
+            int color = ContextCompat.getColor(context, colorRes);
+            starImage.setColorFilter(color);
+
+            int drawableRes = R.drawable.star_regular;
+            starImage.setImageResource(drawableRes);
+        }
     }
 
     private void fill(){

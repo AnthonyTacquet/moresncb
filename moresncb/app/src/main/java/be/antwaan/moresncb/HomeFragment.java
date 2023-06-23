@@ -2,11 +2,15 @@ package be.antwaan.moresncb;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,26 +31,32 @@ import org.json.JSONException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 import be.antwaan.moresncb.data.NMBSData;
 import be.antwaan.moresncb.global.Enum.DepartureOrArrival;
 import be.antwaan.moresncb.global.NMBS.Station;
 import be.antwaan.moresncb.logica.Memory;
+import be.antwaan.moresncb.logica.adapter.ButtonAdapter;
+import be.antwaan.moresncb.logica.draw.DrawLine;
 
 
 public class HomeFragment extends Fragment {
 
     private TextInputEditText fromInput, toInput;
     private TextInputLayout fromLayout, toLayout;
+    private DrawLine drawView;
+    private RecyclerView recyclerView;
     private TextView settingTime;
-    private ImageView switchButton;
+    private ImageView switchButton, addButton;
     private Dialog settingTimeDialog;
     private ArrayList<Station> stations;
     private LocalDateTime dateTime = LocalDateTime.now();
     private DepartureOrArrival departureOrArrival = DepartureOrArrival.DEPARTURE;
     private LocalDateTime selectedDateTime = LocalDateTime.now();
+    private List<Station> stationList = new ArrayList<>();
     private Memory memory;
-
+    private ButtonAdapter buttonAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,7 +67,15 @@ public class HomeFragment extends Fragment {
         toInput = fragView.findViewById(R.id.to_input);
         settingTime = fragView.findViewById(R.id.setting_time);
         switchButton = fragView.findViewById(R.id.switch_button);
+        recyclerView = fragView.findViewById(R.id.buttons_list);
+        drawView = fragView.findViewById(R.id.draw_view);
+        addButton = fragView.findViewById(R.id.add_button);
         settingTimeDialog = new Dialog(getContext());
+
+        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false));
+
+        buttonAdapter = new ButtonAdapter(stationList);
+        recyclerView.setAdapter(buttonAdapter);
 
         memory = new Memory(getContext());
         loadData(new NMBSData());
@@ -73,6 +91,10 @@ public class HomeFragment extends Fragment {
             return true;
         });
 
+        addButton.setOnClickListener(v -> {
+            navigateToSearchFragment("Shortcut");
+        });
+
         switchButton.setOnClickListener(v -> {
             String temp = memory.readFromMemory("Destination");
             memory.writeToMemory("Destination", memory.readFromMemory("Departure"));
@@ -80,9 +102,43 @@ public class HomeFragment extends Fragment {
             loadMemory();
         });
 
+        recyclerView.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    drawView.setXandY(event.getX(), event.getY());
+                    drawView.setDraw(true);
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    if(drawView.getDraw()){
+                        drawView.setCurrentXandY(event.getX(), event.getY());
+                        drawView.invalidate();
+                    }
+                    return true;
+                case MotionEvent.ACTION_UP:
+                    drawView.setDraw(false);
+                    drawView.invalidate();
+                    calculateRoute();
+                    return true;
+            }
+            return false;
+        });
+
+
         settingTime.setOnClickListener(v -> showTimeDialog(fragView));
 
         return fragView;
+    }
+
+    private void calculateRoute(){
+        View startChild = recyclerView.findChildViewUnder(drawView.getStartX(), drawView.getStartY());
+        View endChild = recyclerView.findChildViewUnder(drawView.getCurrentX(), drawView.getCurrentY());
+        if (startChild != null && endChild != null){
+            Station origin = stationList.get(recyclerView.getChildAdapterPosition(startChild));
+            Station destination = stationList.get(recyclerView.getChildAdapterPosition(endChild));
+
+            if (origin != destination)
+                navigateToRouteFragment(origin, destination);
+        }
     }
 
     private void showTimeDialog(View view){
@@ -209,6 +265,7 @@ public class HomeFragment extends Fragment {
         String destination =  memory.readFromMemory("Destination");
         String dateString =  memory.readFromMemory("DateTime");
         String depArr =  memory.readFromMemory("DepArr");
+        String temp = memory.readFromMemory("Shortcut");
 
         if (departure != null)
             fromInput.setText(stations.stream().filter(e -> e.getId().equals(departure)).findFirst().get().getName());
@@ -218,6 +275,16 @@ public class HomeFragment extends Fragment {
             toInput.setText(stations.stream().filter(e -> e.getId().equals(destination)).findFirst().get().getName());
         else
             toInput.setText("");
+        if (temp != null){
+            memory.writeToShortcutMemory(stations.stream().filter(e -> e.getId().equals(temp)).findFirst().get());
+            stationList.addAll(memory.readShortcutsFromMemory());
+            buttonAdapter.notifyDataSetChanged();
+            memory.writeToMemory("Shortcut", null);
+        } else{
+            stationList.addAll(memory.readShortcutsFromMemory());
+            buttonAdapter.notifyDataSetChanged();
+        }
+
 
         if (dateString != null && depArr != null){
             departureOrArrival = DepartureOrArrival.valueOf(depArr);

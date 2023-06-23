@@ -3,6 +3,7 @@ package be.antwaan.moresncb.global.NMBS;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class Arrival {
     private int delay;
@@ -127,6 +128,19 @@ public class Arrival {
 
     public void setDirection(String direction) {
         this.direction = direction;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Arrival)) return false;
+        Arrival arrival = (Arrival) o;
+        return Objects.equals(getStationName(), arrival.getStationName()) && Objects.equals(getStation(), arrival.getStation()) && Objects.equals(getDateTime(), arrival.getDateTime()) && Objects.equals(getDirection(), arrival.getDirection());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDelay(), getStationName(), getStation(), getDateTime(), getVehicleName(), getVehicle(), getPlatformNumber(), getPlatform(), isArrived(), isCanceled(), getWalking(), getDirection());
     }
 
     @Override

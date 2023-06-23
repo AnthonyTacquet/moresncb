@@ -2,6 +2,7 @@ package be.antwaan.moresncb.global.NMBS;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Objects;
 
 public class Stop {
     private int id;
@@ -185,5 +186,18 @@ public class Stop {
                 ", arrival time: " + time.getHours() +
                 ":" +time.getMinutes() +
                 " " + (delay!=0?"+" + delay:"");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Stop)) return false;
+        Stop stop = (Stop) o;
+        return Objects.equals(getStation(), stop.getStation()) && Objects.equals(getTime(), stop.getTime()) && Objects.equals(getScheduledDepartureTime(), stop.getScheduledDepartureTime()) && Objects.equals(getScheduleArrivalTime(), stop.getScheduleArrivalTime()) && Objects.equals(getDepartureConnection(), stop.getDepartureConnection());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getStation(), getTime(), getDelay(), getPlatform(), isCanceled(), getDepartureDelay(), isDepartureCanceled(), getScheduledDepartureTime(), getArrivalDelay(), getLeft(), isArrivalCanceled(), isExtraStop(), isArrived(), getScheduleArrivalTime(), getDepartureConnection(), getOccupancy());
     }
 }

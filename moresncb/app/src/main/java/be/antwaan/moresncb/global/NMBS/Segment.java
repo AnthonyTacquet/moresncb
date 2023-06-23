@@ -1,6 +1,7 @@
 package be.antwaan.moresncb.global.NMBS;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Segment {
     private int id;
@@ -55,5 +56,18 @@ public class Segment {
 
     public void setUnits(ArrayList<Unit> units) {
         this.units = units;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Segment)) return false;
+        Segment segment = (Segment) o;
+        return getId() == segment.getId() && Objects.equals(getOrigin(), segment.getOrigin()) && Objects.equals(getDesination(), segment.getDesination()) && Objects.equals(getSource(), segment.getSource()) && Objects.equals(getUnits(), segment.getUnits());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getOrigin(), getDesination(), getSource(), getUnits());
     }
 }

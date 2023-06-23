@@ -98,6 +98,7 @@ public class RouteFragment extends Fragment {
         connections = new ArrayList<>();
         routeAdapter = new RouteAdapter(getContext(), connections);
         listView.setAdapter(routeAdapter);
+        listView.setDividerHeight(20);
 
         setFields();
         setSettings();

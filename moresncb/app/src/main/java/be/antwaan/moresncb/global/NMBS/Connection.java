@@ -5,6 +5,7 @@ import java.sql.Time;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Connection {
     private int id;
@@ -68,6 +69,22 @@ public class Connection {
 
     public void setVias(ArrayList<Via> vias) {
         this.vias = vias;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Connection)) return false;
+        Connection that = (Connection) o;
+        return getDeparture().getStationName().equals(that.getDeparture().getStationName()) &&
+                getDeparture().getDateTime().equals(that.getDeparture().getDateTime()) &&
+                getArrival().getStationName().equals(that.getArrival().getStationName()) &&
+                getArrival().getDateTime().equals(that.getArrival().getDateTime());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getDeparture(), getArrival(), getDuration(), getAlerts(), getVias());
     }
 
     @Override

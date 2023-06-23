@@ -1,5 +1,7 @@
 package be.antwaan.moresncb.global.NMBS;
 
+import java.util.Objects;
+
 public class Unit {
     private int id;
     private Material material;
@@ -262,5 +264,18 @@ public class Unit {
 
     public void setImageId(int imageId) {
         this.imageId = imageId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Unit)) return false;
+        Unit unit = (Unit) o;
+        return getId() == unit.getId() && hasToilets == unit.hasToilets && hasTables == unit.hasTables && hasSecondClassOutlets == unit.hasSecondClassOutlets && hasFirstClassOutlets == unit.hasFirstClassOutlets && hasHeating == unit.hasHeating && hasAirco == unit.hasAirco && canPassToNextUnit == unit.canPassToNextUnit && getStandingPlacesSecondClass() == unit.getStandingPlacesSecondClass() && getStandingPlacesFirstClass() == unit.getStandingPlacesFirstClass() && getSeatsCoupeSecondClass() == unit.getSeatsCoupeSecondClass() && getSeatsCoupeFirstClass() == unit.getSeatsCoupeFirstClass() && getSeatsSecondClass() == unit.getSeatsSecondClass() && getSeatsFirstClass() == unit.getSeatsFirstClass() && getLengthInMeter() == unit.getLengthInMeter() && hasSemiAutomaticInteriorDoors == unit.hasSemiAutomaticInteriorDoors && hasLuggageSection == unit.hasLuggageSection && getTractionPosition() == unit.getTractionPosition() && hasPrmSection == unit.hasPrmSection && hasPriorityPlaces == unit.hasPriorityPlaces && hasBikeSection == unit.hasBikeSection && getImageId() == unit.getImageId() && Objects.equals(getMaterial(), unit.getMaterial()) && Objects.equals(getMaterialNumber(), unit.getMaterialNumber()) && Objects.equals(getTractionType(), unit.getTractionType()) && Objects.equals(getMaterialSubTypeName(), unit.getMaterialSubTypeName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getMaterial(), hasToilets, hasTables, hasSecondClassOutlets, hasFirstClassOutlets, hasHeating, hasAirco, getMaterialNumber(), getTractionType(), canPassToNextUnit, getStandingPlacesSecondClass(), getStandingPlacesFirstClass(), getSeatsCoupeSecondClass(), getSeatsCoupeFirstClass(), getSeatsSecondClass(), getSeatsFirstClass(), getLengthInMeter(), hasSemiAutomaticInteriorDoors, hasLuggageSection, getMaterialSubTypeName(), getTractionPosition(), hasPrmSection, hasPriorityPlaces, hasBikeSection, getImageId());
     }
 }

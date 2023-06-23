@@ -3,6 +3,7 @@ package be.antwaan.moresncb.global.NMBS;
 import be.antwaan.moresncb.global.Main.TimeOnly;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Via {
 
@@ -78,6 +79,19 @@ public class Via {
 
     public void setDirections(String directions) {
         this.directions = directions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Via)) return false;
+        Via via = (Via) o;
+        return Objects.equals(getArrival(), via.getArrival()) && Objects.equals(getDeparture(), via.getDeparture()) && Objects.equals(getTimeBetween(), via.getTimeBetween()) && Objects.equals(getStationName(), via.getStationName()) && Objects.equals(getStation(), via.getStation()) && Objects.equals(getDirections(), via.getDirections());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getArrival(), getDeparture(), getTimeBetween(), getStationName(), getStation(), getVehicleName(), getDirections());
     }
 
     @Override

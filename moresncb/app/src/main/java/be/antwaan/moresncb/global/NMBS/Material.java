@@ -1,5 +1,7 @@
 package be.antwaan.moresncb.global.NMBS;
 
+import java.util.Objects;
+
 import be.antwaan.moresncb.global.Enum.Orientation;
 
 public class Material {
@@ -35,5 +37,18 @@ public class Material {
 
     public void setOrientation(Orientation orientation) {
         this.orientation = orientation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Material)) return false;
+        Material material = (Material) o;
+        return Objects.equals(getParentType(), material.getParentType()) && Objects.equals(getSubType(), material.getSubType()) && getOrientation() == material.getOrientation();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getParentType(), getSubType(), getOrientation());
     }
 }

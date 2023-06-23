@@ -2,6 +2,7 @@ package be.antwaan.moresncb.global.NMBS;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Objects;
 
 public class Alert {
     private int id;
@@ -68,6 +69,19 @@ public class Alert {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Alert)) return false;
+        Alert alert = (Alert) o;
+        return getId() == alert.getId() && Objects.equals(getHeader(), alert.getHeader()) && Objects.equals(getLead(), alert.getLead()) && Objects.equals(getLink(), alert.getLink()) && Objects.equals(getStartTime(), alert.getStartTime()) && Objects.equals(getEndTime(), alert.getEndTime());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getHeader(), getLead(), getLink(), getStartTime(), getEndTime());
     }
 
     @Override

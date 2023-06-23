@@ -1,6 +1,7 @@
 package be.antwaan.moresncb.global.NMBS;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Disturbance {
     private int id;
@@ -75,5 +76,18 @@ public class Disturbance {
 
     public void setAttatchment(String attatchment) {
         this.attatchment = attatchment;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Disturbance)) return false;
+        Disturbance that = (Disturbance) o;
+        return Objects.equals(getTitle(), that.getTitle()) && Objects.equals(getDescription(), that.getDescription()) && Objects.equals(getLink(), that.getLink()) && Objects.equals(getType(), that.getType()) && Objects.equals(getTimeStamp(), that.getTimeStamp()) && Objects.equals(getAttatchment(), that.getAttatchment());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getTitle(), getDescription(), getLink(), getType(), getTimeStamp(), getAttatchment());
     }
 }

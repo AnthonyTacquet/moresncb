@@ -1,6 +1,7 @@
 package be.antwaan.moresncb.global.NMBS;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Vehicle {
     private String name;
@@ -94,5 +95,18 @@ public class Vehicle {
                 ", locationY=" + locationY +
                 ", id='" + id + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Vehicle)) return false;
+        Vehicle vehicle = (Vehicle) o;
+        return Objects.equals(getName(), vehicle.getName()) && Objects.equals(getShortName(), vehicle.getShortName()) && Objects.equals(getNumber(), vehicle.getNumber()) && Objects.equals(getType(), vehicle.getType()) && Objects.equals(getId(), vehicle.getId()) && Objects.equals(getStops(), vehicle.getStops());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getShortName(), getNumber(), getType(), getLocationX(), getLocationY(), getId(), getStops());
     }
 }

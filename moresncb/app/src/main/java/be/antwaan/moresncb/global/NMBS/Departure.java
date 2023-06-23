@@ -3,6 +3,7 @@ package be.antwaan.moresncb.global.NMBS;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class Departure {
     private int delay;
@@ -167,6 +168,19 @@ public class Departure {
 
     public void setDepartureConnection(String departureConnection) {
         this.departureConnection = departureConnection;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Departure)) return false;
+        Departure departure = (Departure) o;
+        return getStopsNumber() == departure.getStopsNumber() && Objects.equals(getStationName(), departure.getStationName()) && Objects.equals(getStation(), departure.getStation()) && Objects.equals(getDateTime(), departure.getDateTime()) && Objects.equals(getDirection(), departure.getDirection()) && Objects.equals(getStops(), departure.getStops());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDelay(), getStationName(), getStation(), getDateTime(), getVehicleName(), getVehicle(), getPlatformNumber(), getPlatform(), isLeft(), isCanceled(), getDirection(), getStopsNumber(), getStops(), getAlerts(), getWalking(), getDepartureConnection());
     }
 
     @Override
