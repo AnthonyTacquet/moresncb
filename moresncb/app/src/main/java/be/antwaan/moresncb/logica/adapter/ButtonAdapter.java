@@ -53,13 +53,6 @@ public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ViewHolder
             super(itemView);
             iconImage = itemView.findViewById(R.id.icon_image);
             nameText = itemView.findViewById(R.id.location_name);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(itemView.getContext(), "CLICKED ME??", Toast.LENGTH_SHORT).show();
-                }
-            });
         }
     }
 }

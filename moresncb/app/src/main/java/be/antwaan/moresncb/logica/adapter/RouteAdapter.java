@@ -91,10 +91,13 @@ public class RouteAdapter extends ArrayAdapter<Connection> {
         viewHolder.platformField.setText("Platform " + item.getDeparture().getPlatformNumber());
         viewHolder.durationField.setText("" + item.getDuration().toMinutes() + " min");
 
+        int colorRes = R.color.orange;
+        int colorOrange = ContextCompat.getColor(context, colorRes);
+
         if (item.getAlerts().size() > 1){
             Drawable drawable = getContext().getDrawable(R.drawable.triangle_exclamation_solid);
-            drawable.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
-            viewHolder.messageField.setTextColor(Color.RED);
+            drawable.setColorFilter(colorOrange, PorterDuff.Mode.SRC_IN);
+            viewHolder.messageField.setTextColor(colorOrange);
 
             viewHolder.messageImage.setImageDrawable(drawable);
             viewHolder.messageField.setText("Multiple messages for this journey");
@@ -102,8 +105,8 @@ public class RouteAdapter extends ArrayAdapter<Connection> {
             Alert alert = item.getAlerts().get(0);
 
             Drawable drawable = getContext().getDrawable(R.drawable.triangle_exclamation_solid);
-            drawable.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
-            viewHolder.messageField.setTextColor(Color.RED);
+            drawable.setColorFilter(colorOrange, PorterDuff.Mode.SRC_IN);
+            viewHolder.messageField.setTextColor(colorOrange);
 
             viewHolder.messageImage.setImageDrawable(drawable);
             viewHolder.messageField.setText(alert.getHeader());
@@ -120,16 +123,16 @@ public class RouteAdapter extends ArrayAdapter<Connection> {
                 favorites.remove(item);
                 memory.removeConnectionFromMemory(item);
 
-                int colorRes = R.color.white;
-                int color = ContextCompat.getColor(context, colorRes);
-                viewHolder.favoriteButton.setColorFilter(color);
+                int colorRes2 = R.color.white;
+                int color2 = ContextCompat.getColor(context, colorRes2);
+                viewHolder.favoriteButton.setColorFilter(color2);
 
                 int drawableRes = R.drawable.star_regular;
                 viewHolder.favoriteButton.setImageResource(drawableRes);
             } else {
-                int colorRes = R.color.gold;
-                int color = ContextCompat.getColor(context, colorRes);
-                viewHolder.favoriteButton.setColorFilter(color);
+                int colorRes2 = R.color.gold;
+                int color2 = ContextCompat.getColor(context, colorRes2);
+                viewHolder.favoriteButton.setColorFilter(color2);
 
                 int drawableRes = R.drawable.star_solid;
                 viewHolder.favoriteButton.setImageResource(drawableRes);
