@@ -20,6 +20,10 @@
         <item name="colorSecondary">@color/white</item>
     </style>
 
+    <style name="FavoriteImage">
+        <item name="android:src">@drawable/favorites_light</item>
+    </style>
+
     <style name="RouteList">
         <item name="android:divider">@color/white</item>
         <item name="android:dividerHeight">5dp</item>

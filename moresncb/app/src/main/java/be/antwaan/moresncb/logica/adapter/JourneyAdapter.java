@@ -2,6 +2,7 @@ package be.antwaan.moresncb.logica.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.util.Pair;
@@ -13,6 +14,8 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -96,6 +99,31 @@ public class JourneyAdapter  extends ArrayAdapter<Pair<Departure, Arrival>> {
 
         StopsAdapter stopsAdapter = new StopsAdapter(context, groupItems, childItems);
         viewHolder.expandableListView.setAdapter(stopsAdapter);
+
+        int greyRes = R.color.grey;
+        int grey = ContextCompat.getColor(context, greyRes);
+
+        if (arrival.isCanceled()){
+            viewHolder.arrivalTime.setPaintFlags(viewHolder.arrivalTime.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            viewHolder.destinationLocation.setPaintFlags(viewHolder.arrivalTime.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            viewHolder.destinationPlatform.setPaintFlags(viewHolder.arrivalTime.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+        if (departure.isCanceled()){
+            viewHolder.departureTime.setPaintFlags(viewHolder.departureTime.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            viewHolder.departureLocation.setPaintFlags(viewHolder.arrivalTime.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            viewHolder.departurePlatform.setPaintFlags(viewHolder.arrivalTime.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+        if (arrival.isArrived()){
+            viewHolder.arrivalTime.setTextColor(grey);
+            viewHolder.destinationLocation.setTextColor(grey);
+            viewHolder.destinationPlatform.setTextColor(grey);
+        }
+        if (departure.isLeft()){
+            viewHolder.departureTime.setTextColor(grey);
+            viewHolder.departureLocation.setTextColor(grey);
+            viewHolder.departurePlatform.setTextColor(grey);
+
+        }
 
         return convertView;
     }

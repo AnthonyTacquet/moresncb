@@ -9,6 +9,8 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -25,6 +27,8 @@ public class FavoriteFragment extends Fragment {
     private ListView listView;
     private FavoriteAdapter favoriteAdapter;
     private ArrayList<Connection> connections;
+    private LinearLayout emptyLayout;
+    private Button planJourneyButton;
     private Memory memory;
 
     @Override
@@ -33,6 +37,8 @@ public class FavoriteFragment extends Fragment {
         View fragView = inflater.inflate(R.layout.fragment_favorite, container, false);
 
         listView = fragView.findViewById(R.id.route_list);
+        emptyLayout = fragView.findViewById(R.id.empty_layout);
+        planJourneyButton = fragView.findViewById(R.id.plan_journey_button);
 
         memory = new Memory(requireContext());
 
@@ -58,8 +64,19 @@ public class FavoriteFragment extends Fragment {
 
         });
 
+        planJourneyButton.setOnClickListener(v -> navigateToHomeFragment());
+
 
         return fragView;
+    }
+
+    private void navigateToHomeFragment() {
+        HomeFragment newFragment = new HomeFragment();
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout, newFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
     private void navigateToJourneyFragment(Connection connection) {
@@ -74,6 +91,9 @@ public class FavoriteFragment extends Fragment {
     private void loadData(){
         connections.addAll(memory.readFromConnectionMemory());
         favoriteAdapter.notifyDataSetChanged();
+
+        if (connections.size() > 0)
+            emptyLayout.setVisibility(View.GONE);
     }
 
     private void showToast(String message) {

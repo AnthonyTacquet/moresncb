@@ -34,10 +34,6 @@ public class MainActivity extends AppCompatActivity {
                 replaceFragment(new HomeFragment());
             else if(item.getItemId() == R.id.favorites)
                 replaceFragment(new FavoriteFragment());
-            else if(item.getItemId() == R.id.maps)
-                replaceFragment(new MapFragment());
-            else if(item.getItemId() == R.id.info)
-                replaceFragment(new InfoFragment());
             return true;
         });
 

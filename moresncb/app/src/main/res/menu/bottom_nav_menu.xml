@@ -7,10 +7,4 @@
     <item android:title="Favorites"
         android:icon="@drawable/baseline_star_24"
         android:id="@+id/favorites"/>
-    <item android:title="Info"
-        android:icon="@drawable/baseline_info_24"
-        android:id="@+id/info"/>
-    <item android:title="Maps"
-        android:icon="@drawable/baseline_map_24"
-        android:id="@+id/maps"/>
 </menu>

@@ -2,6 +2,7 @@ package be.antwaan.moresncb.logica.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -141,6 +142,17 @@ public class RouteAdapter extends ArrayAdapter<Connection> {
             }
         });
 
+        int greyRes = R.color.grey;
+        int grey = ContextCompat.getColor(context, greyRes);
+
+        if (item.getArrival().isCanceled())
+            viewHolder.arrivalTime.setPaintFlags(viewHolder.arrivalTime.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        if (item.getDeparture().isCanceled())
+            viewHolder.departureTime.setPaintFlags(viewHolder.departureTime.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        if (item.getArrival().isArrived())
+            viewHolder.arrivalTime.setTextColor(grey);
+        if (item.getDeparture().isLeft())
+            viewHolder.departureTime.setTextColor(grey);
 
         return convertView;
     }
