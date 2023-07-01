@@ -96,7 +96,7 @@ public class MapFragment extends Fragment {
                 } catch (JSONException e) {
                     showToast(e.getMessage());
                     run = false;
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     showToast(e.getMessage());
                     run = false;
                 }
@@ -107,37 +107,42 @@ public class MapFragment extends Fragment {
     }
 
     private void drawVehicle(){
+        try {
+            double latitude = vehicle.getLocationY();
+            double longitude = vehicle.getLocationX();
+            if (latitude == 0 && longitude == 0){
+                showToast("Couldn't find " + vehicle.getName());
+                return;
+            }
+            String name = vehicle.getName();
+            Drawable drawable = ContextCompat.getDrawable(context, R.drawable.baseline_train_24);
 
-        double latitude = vehicle.getLocationY();
-        double longitude = vehicle.getLocationX();
-        if (latitude == 0 && longitude == 0){
-            showToast("Couldn't find " + vehicle.getName());
-            return;
+            Marker marker = new Marker(mapView);
+            GeoPoint geoPoint = new GeoPoint(latitude, longitude);
+            marker.setPosition(geoPoint);
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            marker.setTitle(name);
+
+            if (drawable instanceof VectorDrawable) {
+                Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                drawable.draw(canvas);
+                Drawable resizedDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, (int) (48.0f * getResources().getDisplayMetrics().density), (int) (48.0f * getResources().getDisplayMetrics().density), true));
+                marker.setIcon(resizedDrawable);
+            } else {
+                marker.setIcon(drawable);
+            }
+
+            mapView.getOverlays().add(marker);
+            mapView.invalidate();
+
+            setZoom(latitude, longitude);
+        } catch (Exception exception){
+
         }
-        String name = vehicle.getName();
-        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.baseline_train_24);
 
-        Marker marker = new Marker(mapView);
-        GeoPoint geoPoint = new GeoPoint(latitude, longitude);
-        marker.setPosition(geoPoint);
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.setTitle(name);
 
-        if (drawable instanceof VectorDrawable) {
-            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-            Drawable resizedDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, (int) (48.0f * getResources().getDisplayMetrics().density), (int) (48.0f * getResources().getDisplayMetrics().density), true));
-            marker.setIcon(resizedDrawable);
-        } else {
-            marker.setIcon(drawable);
-        }
-
-        mapView.getOverlays().add(marker);
-        mapView.invalidate();
-
-        setZoom(latitude, longitude);
     }
 
     private void setZoom(double latitude, double longitude){

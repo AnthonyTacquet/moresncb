@@ -1,12 +1,15 @@
 package be.antwaan.moresncb.logica.draw;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.PathEffect;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -34,7 +37,13 @@ public class DrawLine extends View {
     }
 
     private void init(Context context) {
-        int color = ContextCompat.getColor(context, R.color.lightgrey);
+        int color;
+        Resources resources = context.getResources();
+        if (resources.getConfiguration().uiMode == Configuration.UI_MODE_NIGHT_YES) {
+            color = ContextCompat.getColor(getContext(), R.color.lightgrey);
+        } else {
+            color = ContextCompat.getColor(getContext(), R.color.darkgrey);
+        }
 
         linePaint = new Paint();
         linePaint.setColor(color);

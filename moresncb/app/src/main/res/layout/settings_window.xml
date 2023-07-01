@@ -70,6 +70,7 @@
                 android:id="@+id/day_back_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/IconTint"
                 android:src="@drawable/baseline_chevron_left_24"/>
 
             <TextView
@@ -84,6 +85,7 @@
                 android:id="@+id/day_next_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/IconTint"
                 android:src="@drawable/baseline_chevron_right_24"/>
 
         </LinearLayout>

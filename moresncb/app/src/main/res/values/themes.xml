@@ -4,9 +4,20 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:textSize">16sp</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:statusBarColor">@color/lightblue</item>
     </style>
 
     <style name="Theme.Moresncb" parent="Base.Theme.Moresncb" />
+
+    <style name="BottomNavMenu" parent="Widget.Design.BottomNavigationView">
+        <item name="itemTextColor">@color/darkgrey</item>
+        <item name="itemIconTint">@color/darkgrey</item>
+        <item name="background">@color/white</item>
+        <item name="backgroundColor">@color/white</item>
+        <item name="backgroundTint">@color/white</item>
+
+    </style>
 
     <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <item name="boxStrokeColor">@color/white</item>
@@ -33,7 +44,19 @@
         <item name="android:textColor">@color/darkgrey</item>
     </style>
 
+    <style name="IconTint">
+        <item name="android:tint">@color/darkgrey</item>
+    </style>
+
     <style name="BackGround">
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="BackgroundLightGreyBlack">
+        <item name="android:background">@color/lightgrey</item>
+    </style>
+
+    <style name="BackgroundLightGreyDarkGrey">
         <item name="android:background">@color/lightgrey</item>
     </style>
 

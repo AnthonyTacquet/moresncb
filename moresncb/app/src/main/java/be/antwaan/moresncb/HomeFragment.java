@@ -54,7 +54,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private TextView settingTime;
     private ImageView switchButton, addButton;
-    private Dialog settingTimeDialog, dialog;
+    private Dialog settingTimeDialog;
     private ArrayList<Station> stations;
     private LocalDateTime dateTime = LocalDateTime.now();
     private DepartureOrArrival departureOrArrival = DepartureOrArrival.DEPARTURE;
@@ -78,7 +78,6 @@ public class HomeFragment extends Fragment {
         addButton = fragView.findViewById(R.id.add_button);
 
         settingTimeDialog = new Dialog(getContext());
-        dialog = new Dialog(getContext());
 
         GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 2);
         recyclerView.setLayoutManager(layoutManager);
@@ -152,8 +151,6 @@ public class HomeFragment extends Fragment {
 
             if (origin != destination)
                 navigateToRouteFragment(origin, destination);
-            else
-                showDialog(origin);
         }
     }
 
@@ -223,31 +220,6 @@ public class HomeFragment extends Fragment {
         settingTimeDialog.show();
     }
 
-    private void showDialog(Station station){
-        LinearLayout removeLayout;
-
-        // Set dialog width to match parent
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams.copyFrom(dialog.getWindow().getAttributes());
-        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        layoutParams.gravity = Gravity.BOTTOM;
-
-        dialog.getWindow().setAttributes(layoutParams);
-
-        dialog.setContentView(R.layout.button_box);
-        removeLayout = dialog.findViewById(R.id.remove_layout);
-
-        removeLayout.setOnClickListener(v -> {
-            memory.removeShortcutFromMemory(station);
-            stationList.remove(station);
-            buttonAdapter.notifyDataSetChanged();
-            dialog.dismiss();
-        });
-
-        dialog.show();
-    }
-
     private void closeDialog(LocalDateTime localDateTime, DepartureOrArrival depArr){
         if (depArr != null)
             departureOrArrival = depArr;
@@ -293,6 +265,8 @@ public class HomeFragment extends Fragment {
         Thread thread = new Thread(() -> {
             try {
                 stations = nmbsData.GetStations();
+                if(getActivity() == null)
+                    return;
                 requireActivity().runOnUiThread(() -> loadMemory());
             } catch (JSONException e) {
                 showToast(e.getMessage());
@@ -302,41 +276,47 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadMemory(){
-        String departure = memory.readFromMemory("Departure");
-        String destination =  memory.readFromMemory("Destination");
-        String dateString =  memory.readFromMemory("DateTime");
-        String depArr =  memory.readFromMemory("DepArr");
-        String temp = memory.readFromMemory("Shortcut");
 
-        if (departure != null)
-            fromInput.setText(stations.stream().filter(e -> e.getId().equals(departure)).findFirst().get().getName());
-        else
-            fromInput.setText("");
-        if (destination != null)
-            toInput.setText(stations.stream().filter(e -> e.getId().equals(destination)).findFirst().get().getName());
-        else
-            toInput.setText("");
-        if (temp != null){
-            memory.writeToShortcutMemory(stations.stream().filter(e -> e.getId().equals(temp)).findFirst().get());
-            stationList.addAll(memory.readShortcutsFromMemory());
-            buttonAdapter.notifyDataSetChanged();
-            memory.writeToMemory("Shortcut", null);
-        } else{
-            stationList.addAll(memory.readShortcutsFromMemory());
-            buttonAdapter.notifyDataSetChanged();
-        }
+        try {
+            String departure = memory.readFromMemory("Departure");
+            String destination =  memory.readFromMemory("Destination");
+            String dateString =  memory.readFromMemory("DateTime");
+            String depArr =  memory.readFromMemory("DepArr");
+            String temp = memory.readFromMemory("Shortcut");
 
+            if (departure != null)
+                fromInput.setText(stations.stream().filter(e -> e.getId().equals(departure)).findFirst().get().getName());
+            else
+                fromInput.setText("");
+            if (destination != null)
+                toInput.setText(stations.stream().filter(e -> e.getId().equals(destination)).findFirst().get().getName());
+            else
+                toInput.setText("");
 
-        if (dateString != null && depArr != null){
-            departureOrArrival = DepartureOrArrival.valueOf(depArr);
-            dateTime = LocalDateTime.parse(dateString);
-        }
-        closeDialog(null, null);
+            stationList.clear();
+            if (temp != null){
+                memory.writeToShortcutMemory(stations.stream().filter(e -> e.getId().equals(temp)).findFirst().get());
+                stationList.addAll(memory.readShortcutsFromMemory());
+                buttonAdapter.notifyDataSetChanged();
+                memory.writeToMemory("Shortcut", null);
+            } else{
+                stationList.addAll(memory.readShortcutsFromMemory());
+                buttonAdapter.notifyDataSetChanged();
+            }
 
 
-        if (departure != null && destination != null)
-            navigateToRouteFragment(stations.stream().filter(e -> e.getId().equals(departure)).findFirst().get(),
-                                    stations.stream().filter(e -> e.getId().equals(destination)).findFirst().get());
+            if (dateString != null && depArr != null){
+                departureOrArrival = DepartureOrArrival.valueOf(depArr);
+                dateTime = LocalDateTime.parse(dateString);
+            }
+            closeDialog(null, null);
+
+
+            if (departure != null && destination != null)
+                navigateToRouteFragment(stations.stream().filter(e -> e.getId().equals(departure)).findFirst().get(),
+                        stations.stream().filter(e -> e.getId().equals(destination)).findFirst().get());
+        } catch (Exception e){}
+
 
     }
 

@@ -1,6 +1,8 @@
 package be.antwaan.moresncb.logica.adapter;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -58,7 +60,15 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.ViewHolder> {
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
 
-            imageView.setColorFilter(Color.WHITE);
+            int color;
+            Resources resources = context.getResources();
+            if (resources.getConfiguration().uiMode == Configuration.UI_MODE_NIGHT_YES) {
+                color = ContextCompat.getColor(context, R.color.white);
+            } else {
+                color = ContextCompat.getColor(context, R.color.darkgrey);
+            }
+
+            imageView.setColorFilter(color);
 
             int margin = 5;
             layoutParams.setMarginEnd(margin);

@@ -63,6 +63,10 @@ public class StopsAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
+    public int getStops(){
+        return childItems.get(0).size();
+    }
+
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         if (convertView == null) {

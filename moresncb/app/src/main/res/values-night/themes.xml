@@ -4,6 +4,16 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="android:textSize">16sp</item>
+        <item name="android:navigationBarColor">@color/darkgrey</item>
+        <item name="android:statusBarColor">@color/darkgrey</item>
+    </style>
+
+    <style name="BottomNavMenu" parent="Widget.Design.BottomNavigationView">
+        <item name="itemTextColor">@color/white</item>
+        <item name="itemIconTint">@color/white</item>
+        <item name="background">@color/darkgrey</item>
+        <item name="backgroundColor">@color/darkgrey</item>
+        <item name="backgroundTint">@color/darkgrey</item>
 
     </style>
 
@@ -32,8 +42,21 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="IconTint">
+        <item name="android:tint">@color/white</item>
+    </style>
+
     <style name="BackGround">
         <item name="android:background">@color/black</item>
+    </style>
+
+    <style name="BackgroundLightGreyDarkGrey">
+        <item name="android:background">@color/darkgrey</item>
+    </style>
+
+    <style name="BackgroundLightGreyBlack">
+        <item name="android:background">@color/black</item>
+
     </style>
 
     <style name="BackGroundWhiteGrey">

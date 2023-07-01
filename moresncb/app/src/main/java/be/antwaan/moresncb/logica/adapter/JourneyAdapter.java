@@ -6,9 +6,11 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -44,7 +46,7 @@ public class JourneyAdapter  extends RecyclerView.Adapter<JourneyAdapter.ViewHol
     // Create ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder {
         // Declare your item views
-        private TextView departureTime, arrivalTime, departureLocation, destinationLocation, departurePlatform, destinationPlatform, trainLocation;
+        private TextView departureTime, arrivalTime, departureLocation, destinationLocation, departurePlatform, destinationPlatform, trainLocation, departureDelay, arrivalDelay;
         private ExpandableListView expandableListView;
 
         public ViewHolder(View itemView) {
@@ -52,6 +54,8 @@ public class JourneyAdapter  extends RecyclerView.Adapter<JourneyAdapter.ViewHol
             // Initialize your item views
             departurePlatform = itemView.findViewById(R.id.platform_field_departure);
             destinationPlatform = itemView.findViewById(R.id.platform_field_destination);
+            departureDelay = itemView.findViewById(R.id.departure_delay);
+            arrivalDelay = itemView.findViewById(R.id.arrival_delay);
             departureTime = itemView.findViewById(R.id.departure_time);
             arrivalTime = itemView.findViewById(R.id.arrival_time);
             departureLocation = itemView.findViewById(R.id.departure_field);
@@ -109,8 +113,32 @@ public class JourneyAdapter  extends RecyclerView.Adapter<JourneyAdapter.ViewHol
         StopsAdapter stopsAdapter = new StopsAdapter(context, groupItems, childItems);
         viewHolder.expandableListView.setAdapter(stopsAdapter);
 
+        viewHolder.expandableListView.getLayoutParams().height = 120;
+
+        viewHolder.expandableListView.setOnGroupExpandListener(groupPosition -> {
+            int height = 0;
+            for (int i = 0; i < viewHolder.expandableListView.getAdapter().getCount(); i++) {
+                height += 120;
+            }
+            viewHolder.expandableListView.getLayoutParams().height = height;
+        });
+
+        // Listview Group collapsed listener
+        viewHolder.expandableListView.setOnGroupCollapseListener(groupPosition -> viewHolder.expandableListView.getLayoutParams().height = 120);
+
+
         int greyRes = R.color.grey;
         int grey = ContextCompat.getColor(context, greyRes);
+        if(arrival.getDelay() == 0)
+            viewHolder.arrivalDelay.setVisibility(View.GONE);
+        else
+            viewHolder.arrivalDelay.setText("+" + arrival.getDelay());
+
+        if(departure.getDelay() == 0)
+            viewHolder.departureDelay.setVisibility(View.GONE);
+        else
+            viewHolder.departureDelay.setText("+" + departure.getDelay());
+
 
         if (arrival.isCanceled()) {
             viewHolder.arrivalTime.setPaintFlags(viewHolder.arrivalTime.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
