@@ -112,7 +112,7 @@ public class Memory {
 
     public void writeToShortcutMemory(Station station){
 
-        List<Station> stationsList = readListFromMemory();
+        List<Station> stationsList = readShortcutsFromMemory();
         if (stationsList == null)
             stationsList = new ArrayList<>();
 

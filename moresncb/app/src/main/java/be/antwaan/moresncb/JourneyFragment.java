@@ -10,6 +10,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -38,9 +40,9 @@ public class JourneyFragment extends Fragment {
     private Context context;
     private Connection connection;
     private TextView alertMessage;
-    private ImageView mapsImage, compositionImage, starImage;
+    private ImageView mapsImage, compositionImage, starImage, backButton;
     private LinearLayout alertLayout;
-    private ListView journeyList;
+    private RecyclerView journeyList;
     private List<Pair<Departure, Arrival>> list;
     private JourneyAdapter journeyAdapter;
     private Memory memory;
@@ -71,9 +73,11 @@ public class JourneyFragment extends Fragment {
         compositionImage = fragView.findViewById(R.id.composition_image);
         journeyList = fragView.findViewById(R.id.journey_list);
         starImage = fragView.findViewById(R.id.star_image);
+        backButton = fragView.findViewById(R.id.back_image);
 
         list = new ArrayList<>();
         journeyAdapter = new JourneyAdapter(context, list);
+        journeyList.setLayoutManager(new LinearLayoutManager(context));
         journeyList.setAdapter(journeyAdapter);
 
         checkStar();
@@ -82,6 +86,11 @@ public class JourneyFragment extends Fragment {
         compositionImage.setOnClickListener(v -> navigateToInfoFragment(connection.getDeparture().getVehicle()));
 
         fill();
+
+        backButton.setOnClickListener(v -> {
+            FragmentManager fragmentManager = getParentFragmentManager();
+            fragmentManager.popBackStack();
+        });
 
         starImage.setOnClickListener(v -> {
             if (favorites.contains(connection)){

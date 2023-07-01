@@ -1,5 +1,6 @@
 package be.antwaan.moresncb;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -12,12 +13,15 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +40,7 @@ import java.util.List;
 import be.antwaan.moresncb.data.NMBSData;
 import be.antwaan.moresncb.global.Enum.DepartureOrArrival;
 import be.antwaan.moresncb.global.NMBS.Station;
+import be.antwaan.moresncb.logica.ItemSpacingDecorator;
 import be.antwaan.moresncb.logica.Memory;
 import be.antwaan.moresncb.logica.adapter.ButtonAdapter;
 import be.antwaan.moresncb.logica.draw.DrawLine;
@@ -49,7 +54,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private TextView settingTime;
     private ImageView switchButton, addButton;
-    private Dialog settingTimeDialog;
+    private Dialog settingTimeDialog, dialog;
     private ArrayList<Station> stations;
     private LocalDateTime dateTime = LocalDateTime.now();
     private DepartureOrArrival departureOrArrival = DepartureOrArrival.DEPARTURE;
@@ -57,6 +62,7 @@ public class HomeFragment extends Fragment {
     private List<Station> stationList = new ArrayList<>();
     private Memory memory;
     private ButtonAdapter buttonAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -70,9 +76,15 @@ public class HomeFragment extends Fragment {
         recyclerView = fragView.findViewById(R.id.buttons_list);
         drawView = fragView.findViewById(R.id.draw_view);
         addButton = fragView.findViewById(R.id.add_button);
-        settingTimeDialog = new Dialog(getContext());
 
-        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false));
+        settingTimeDialog = new Dialog(getContext());
+        dialog = new Dialog(getContext());
+
+        GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 2);
+        recyclerView.setLayoutManager(layoutManager);
+
+        recyclerView.addItemDecoration(new ItemSpacingDecorator(2, layoutManager.getSpanCount()));
+
 
         buttonAdapter = new ButtonAdapter(stationList);
         recyclerView.setAdapter(buttonAdapter);
@@ -101,6 +113,8 @@ public class HomeFragment extends Fragment {
             memory.writeToMemory("Departure", temp);
             loadMemory();
         });
+
+        recyclerView.setOnClickListener(v -> calculateRoute());
 
         recyclerView.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
@@ -138,6 +152,8 @@ public class HomeFragment extends Fragment {
 
             if (origin != destination)
                 navigateToRouteFragment(origin, destination);
+            else
+                showDialog(origin);
         }
     }
 
@@ -205,6 +221,31 @@ public class HomeFragment extends Fragment {
         });
 
         settingTimeDialog.show();
+    }
+
+    private void showDialog(Station station){
+        LinearLayout removeLayout;
+
+        // Set dialog width to match parent
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        layoutParams.gravity = Gravity.BOTTOM;
+
+        dialog.getWindow().setAttributes(layoutParams);
+
+        dialog.setContentView(R.layout.button_box);
+        removeLayout = dialog.findViewById(R.id.remove_layout);
+
+        removeLayout.setOnClickListener(v -> {
+            memory.removeShortcutFromMemory(station);
+            stationList.remove(station);
+            buttonAdapter.notifyDataSetChanged();
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
     private void closeDialog(LocalDateTime localDateTime, DepartureOrArrival depArr){
