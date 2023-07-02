@@ -16,11 +16,11 @@ public class MoreSNCB extends Lifecycle {
     @Override
     public void runApp() {
         Form hi = new Form("Hi World", BoxLayout.y());
-        Button helloButton = new Button("Hello World");
+        Button helloButton = new Button("HEY World");
         hi.add(helloButton);
         helloButton.addActionListener(e -> hello());
-        hi.getToolbar().addMaterialCommandToSideMenu("Hello Command",
-        FontImage.MATERIAL_CHECK, 4, e -> hello());
+        //hi.getToolbar().addMaterialCommandToSideMenu("Hello Command",
+        //FontImage.MATERIAL_CHECK, 4, e -> hello());
         hi.show();
     }
 

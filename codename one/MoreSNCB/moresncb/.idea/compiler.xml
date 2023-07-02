@@ -10,10 +10,5 @@
         <module name="moresncb-common" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="moresncb" target="8" />
-      <module name="moresncb-common" target="1.8" />
-      <module name="moresncb-javase" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>
